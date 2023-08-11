@@ -1,0 +1,64 @@
+
+<html>
+   <head>
+
+      <script type = "text/javascript">
+         function WebSocketTest() {
+
+
+
+
+               // Let us open a web socket
+               var ws = new WebSocket("ws://localhost:8080/ws");
+
+               ws.onopen = function() {
+
+                onmousemove = function(e){console.log("mouse location:", e.clientX, e.clientY);
+
+                ws.send(JSON.stringify( {
+
+                  'eventName':'addMouseOffset',
+                  'mouseX':e.clientX,
+                  'mouseY':e.clientY
+                }));
+            }
+
+
+
+
+               };
+
+               ws.onmessage = function (evt) {
+                  var received_msg = evt.data;
+                  document.getElementById('offsets').innerHTML=received_msg
+               };
+
+               ws.onclose = function() {
+
+                  // websocket is closed.
+                  alert("Connection is closed...");
+               };
+
+         }
+      </script>
+
+   </head>
+
+   <body>
+    <h1>
+        Welcome to Grappus Skribbl
+
+    </h1>
+      <div id = "sse">
+         <a href = "javascript:WebSocketTest()">Run WebSocket </a>
+         <br>
+         Move mouse to see web socket in action
+      </div>
+      <div>Offsets:
+
+        <div id="offsets"></div>
+      </div>
+
+
+   </body>
+</html>
