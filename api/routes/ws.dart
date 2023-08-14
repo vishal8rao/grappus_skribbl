@@ -4,7 +4,7 @@ import 'dart:math';
 import 'package:api/cubit/offset_cubit.dart';
 import 'package:dart_frog/dart_frog.dart';
 import 'package:dart_frog_web_socket/dart_frog_web_socket.dart';
-import 'package:domain/events/websocket_event.dart';
+import 'package:models/events/websocket_event.dart';
 
 /// Websocket Handler
 Future<Response> onRequest(RequestContext context) async {
