@@ -10,8 +10,14 @@ dependencies:
   broadcast_bloc: ^0.1.0-dev.2
   dart_frog: ^1.0.0
   dart_frog_web_socket: ^1.0.0
+  equatable: ^2.0.5
+  logging: ^1.2.0
   models:
     path: packages/models
+  player_repository:
+    path: packages/player_repository
+  shelf_cors_headers: ^0.1.5
+  uuid: ^3.0.7
 
 dev_dependencies:
   mocktail: ^0.3.0

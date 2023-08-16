@@ -8,12 +8,19 @@ environment:
 
 dependencies:
   bloc: ^8.1.2
+  equatable: ^2.0.5
   flutter:
     sdk: flutter
   flutter_bloc: ^8.1.3
   flutter_localizations:
     sdk: flutter
   intl: ^0.18.0
+  player_repository:
+    path: api/packages/player_repository
+  game_repository:
+    path: packages/game_repository
+  api:
+    path: api
 
 dev_dependencies:
   bloc_test: ^9.1.2
