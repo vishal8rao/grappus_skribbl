@@ -23,26 +23,9 @@ Future<Response> onRequest(RequestContext context) async {
       ..add(OnPlayerAdded(player));
     channel.sink.add(json.encode(sessionBloc.state.toJson()));
 
-    channel.sink.add(offsetCubit.state.toString());
+    // channel.sink.add(offsetCubit.state.toString());
 
-    channel.stream.listen(
-      (message) {
 
-        // if (message is String && jsonDecode(message) is Map<String, dynamic>) {
-        //   final map = jsonDecode(message) as Map<String, dynamic>;
-        //   final eventName = map['eventName'];
-        //   switch (eventName) {
-        //     case AddMousePointerEvent.name:
-        //       final event = AddMousePointerEvent.fromMap(map);
-        //       offsetCubit.addOffset(Point(event.mouseX, event.mouseY));
-        //     default:
-        //   }
-        // }
-      },
-      onDone: () {
-        sessionBloc.unsubscribe(channel);
-      },
-    );
   });
   return handler(context);
 }

@@ -1,6 +1,8 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:grappus_skribbl/app/canvas/cubit/game_cubit.dart';
 
 class DrawingCanvas extends StatefulWidget {
   const DrawingCanvas({super.key});
@@ -14,6 +16,9 @@ class _DrawingCanvasState extends State<DrawingCanvas> {
 
   @override
   Widget build(BuildContext context) {
+    final players =
+        context.select((GameCubit cubit) => cubit.state.sessionState?.players);
+
     final paint = Paint()
       ..isAntiAlias = true
       ..strokeWidth = 2;
@@ -52,11 +57,24 @@ class _DrawingCanvasState extends State<DrawingCanvas> {
           });
         },
         child: RepaintBoundary(
-          child: CustomPaint(
-            size: Size.infinite,
-            painter: DrawingPainter(
-              pointsList: points,
-            ),
+          child: Stack(
+            children: [
+              CustomPaint(
+                size: Size.infinite,
+                painter: DrawingPainter(
+                  pointsList: points,
+                ),
+              ),
+              Flexible(
+                child: ListView.builder(
+                  itemBuilder: (context, index) => Text(
+                    players![index].userId,
+                    style: TextStyle(color: Colors.black87),
+                  ),
+                  itemCount: players?.length,
+                ),
+              ),
+            ],
           ),
         ),
       ),

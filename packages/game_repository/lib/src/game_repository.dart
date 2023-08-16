@@ -14,9 +14,12 @@ class GameRepository {
 
   Stream<SessionState> get session {
     return _ws.messages.cast<String>().map(
-          (event) =>
-              SessionState.fromJson(jsonDecode(event) as Map<String, dynamic>),
-        );
+      (event) {
+        print("JSONDECODE" + jsonDecode(event).toString());
+
+        return SessionState.fromJson(jsonDecode(event) as Map<String, dynamic>);
+      },
+    );
   }
 
   Stream<ConnectionState> get connection => _ws.connection;

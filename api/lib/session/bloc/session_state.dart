@@ -3,20 +3,21 @@ part of 'session_bloc.dart';
 class SessionState extends Equatable {
   const SessionState({
     this.playerId,
-    this.players = const {},
+    this.players = const [],
   });
 
   factory SessionState.fromJson(Map<String, dynamic> json) => SessionState(
         playerId: json['playerId'] as String,
-        players: Map<String, Player>.from(json['players'] as Map),
+        players: List<Player>.from((json['players'] as Iterable)
+            .map((e) => Player.fromJson(e as String))),
       );
 
   final String? playerId;
-  final Map<String, Player> players;
+  final List<Player> players;
 
   SessionState copyWith({
     String? playerId,
-    Map<String, Player>? players,
+    List<Player>? players,
   }) =>
       SessionState(
         playerId: playerId ?? this.playerId,
@@ -27,7 +28,7 @@ class SessionState extends Equatable {
   List<Object?> get props => [playerId, players];
 
   Map<String, dynamic> toJson() => {
-        'players': Map<String, Player>.from(players),
+        'players': List<dynamic>.from(players.map((x) => x)),
         'playerId': playerId,
       };
 }

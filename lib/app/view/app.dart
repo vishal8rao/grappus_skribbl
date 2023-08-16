@@ -13,8 +13,11 @@ class App extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (context) =>
-              GameCubit(gameRepository: GameRepository(uri: Uri())),
+          create: (context) => GameCubit(
+            gameRepository: GameRepository(
+              uri: Uri.parse('ws://localhost:8080/ws'),
+            ),
+          )..connect(),
         )
       ],
       child: MaterialApp(
