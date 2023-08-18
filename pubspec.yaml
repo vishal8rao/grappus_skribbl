@@ -19,6 +19,8 @@ dependencies:
     path: api/packages/player_repository
   game_repository:
     path: packages/game_repository
+  models:
+    path: api/packages/models
   api:
     path: api
 

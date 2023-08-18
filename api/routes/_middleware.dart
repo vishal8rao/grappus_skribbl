@@ -11,6 +11,6 @@ Handler middleware(Handler handler) {
   return handler
       .use(requestLogger())
       .use(provider<SessionBloc>((context) => _sessionBloc))
-      .use(provider<OffsetCubit>((context) => _offsetCubit))
+      // .use(provider<OffsetCubit>((context) => _offsetCubit))
       .use(corsHeaders());
 }

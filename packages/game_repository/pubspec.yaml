@@ -12,6 +12,8 @@ dependencies:
     path: ../../api/packages/player_repository
   api:
     path: ../../api
+  models:
+    path: ../../api/packages/models
 
 dev_dependencies:
   mocktail: ^0.3.0

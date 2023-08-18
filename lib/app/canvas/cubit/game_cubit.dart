@@ -5,6 +5,7 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:game_repository/game_repository.dart';
+import 'package:player_repository/models/drawing_points.dart';
 
 part 'game_state.dart';
 
@@ -21,5 +22,22 @@ class GameCubit extends Cubit<GameState> {
     _sessionStateSub = _gameRepository.session.listen((sessionState) {
       emit(state.copyWith(sessionState: sessionState));
     });
+    // _sessionStateSub?.onData((data) {
+    //   print('player: ${data.pointsList}');
+    // });
+  }
+
+  Future<void> addPoints(DrawingPointsWrappper points) async {
+    try{
+      _gameRepository.sendPoints(points);
+      // _sessionStateSub = _gameRepository.session.listen((sessionState) {
+      //   emit(state.copyWith(sessionState: sessionState));
+      // });
+      // _sessionStateSub?.onData((data) {
+      //   print('data: ${data.pointsList}');
+      // });
+    }catch(e){
+      debugPrint('Exception here: $e');
+    }
   }
 }

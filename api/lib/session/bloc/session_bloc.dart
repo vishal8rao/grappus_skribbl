@@ -11,6 +11,7 @@ part 'session_state.dart';
 class SessionBloc extends BroadcastBloc<SessionEvent, SessionState> {
   SessionBloc() : super(const SessionState()) {
     on<OnPlayerAdded>(_onPlayerAdded);
+    on<OnPointsAdded>(_onAddPoints);
   }
 
   void _onPlayerAdded(OnPlayerAdded event, Emitter<SessionState> emit) {
@@ -19,7 +20,23 @@ class SessionBloc extends BroadcastBloc<SessionEvent, SessionState> {
       state.copyWith(
         players: players,
         playerId: event.player.userId,
+        pointsList: state.pointsList,
       ),
     );
+  }
+
+  void _onAddPoints(OnPointsAdded event, Emitter<SessionState> emit) {
+    final newPointList = <DrawingPointsWrappper>[
+      ...state.pointsList,
+      event.points
+    ];
+
+    print('after adding point: $newPointList');
+
+    emit(
+      state.copyWith(pointsList: newPointList),
+    );
+
+    print('statepoint: ${state.pointsList}');
   }
 }

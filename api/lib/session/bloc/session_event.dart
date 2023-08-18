@@ -12,3 +12,12 @@ class OnPlayerAdded extends SessionEvent {
   @override
   List<Object?> get props => [player];
 }
+
+class OnPointsAdded extends SessionEvent {
+  const OnPointsAdded(this.points);
+
+  final DrawingPointsWrappper points;
+
+  @override
+  List<Object?> get props => [points];
+}

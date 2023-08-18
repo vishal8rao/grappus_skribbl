@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:api/session/bloc/session_bloc.dart';
+import 'package:player_repository/models/drawing_points.dart';
 import 'package:web_socket_client/web_socket_client.dart';
 
 /// {@template game_repository}
@@ -20,6 +21,11 @@ class GameRepository {
         return SessionState.fromJson(jsonDecode(event) as Map<String, dynamic>);
       },
     );
+  }
+
+  void sendPoints(DrawingPointsWrappper points) {
+    final jsonString = jsonEncode(points.toJson());
+    _ws.send(jsonString);
   }
 
   Stream<ConnectionState> get connection => _ws.connection;
