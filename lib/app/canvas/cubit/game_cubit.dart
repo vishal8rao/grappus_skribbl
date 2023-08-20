@@ -21,7 +21,6 @@ class GameCubit extends Cubit<GameState> {
     debugPrint('Connect');
     _sessionStateSub = _gameRepository.session.listen((sessionState) {
       emit(state.copyWith(sessionState: sessionState));
-      // print('points: ${state.sessionState?.pointsList}');
     });
   }
 

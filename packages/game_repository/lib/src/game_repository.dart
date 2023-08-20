@@ -13,22 +13,21 @@ class GameRepository {
 
   final WebSocket _ws;
 
+  /// function to get the current session data stream
   Stream<SessionState> get session {
     return _ws.messages.cast<String>().map(
       (event) {
-        print('event  ${jsonDecode(event)}');
-        // print('event: $event');
         return SessionState.fromJson(jsonDecode(event) as Map<String, dynamic>);
       },
     );
   }
 
-  void sendPoints(DrawingPointsWrappper points) {
-    final jsonString = jsonEncode(points.toJson());
-    _ws.send(jsonString);
-  }
+  /// function to send the points to the server
+  void sendPoints(DrawingPointsWrappper points) => _ws.send(points.toString());
 
+  /// function to get the connection
   Stream<ConnectionState> get connection => _ws.connection;
 
+  /// function to close the connection
   void close() => _ws.close();
 }

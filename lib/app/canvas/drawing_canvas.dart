@@ -16,16 +16,20 @@ class DrawingCanvas extends StatelessWidget {
         context.select((GameCubit cubit) => cubit.state.sessionState?.players);
 
     final newDrawingPoint = context.select((GameCubit cubit) {
-      final data = cubit.state.sessionState?.points;
-      final points = data!.points != null
-          ? Offset(data.points!.dx, data.points!.dy)
-          : null;
-      final paint = data.paint != null
-          ? (Paint()
-            ..isAntiAlias = data.paint!.isAntiAlias
-            ..strokeWidth = data.paint!.strokeWidth)
-          : null;
-      return DrawingPoints(points: points, paint: paint);
+      final sessionState = cubit.state.sessionState;
+      if (sessionState != null) {
+        final data = sessionState.points;
+        final points = data.points != null
+            ? Offset(data.points!.dx, data.points!.dy)
+            : null;
+        final paint = data.paint != null
+            ? (Paint()
+              ..isAntiAlias = data.paint!.isAntiAlias
+              ..strokeWidth = data.paint!.strokeWidth)
+            : null;
+        return DrawingPoints(points: points, paint: paint);
+      }
+      return DrawingPoints(points: null, paint: null);
     });
 
     pointsList.add(newDrawingPoint);
@@ -33,42 +37,41 @@ class DrawingCanvas extends StatelessWidget {
     return Scaffold(
       body: GestureDetector(
         onPanUpdate: (details) {
-            final renderBox = context.findRenderObject() as RenderBox?;
-            final globalToLocal =
-                renderBox?.globalToLocal(details.globalPosition);
-            context.read<GameCubit>().addPoints(
-                  DrawingPointsWrappper(
-                    points: OffsetWrapper(
-                      dx: globalToLocal!.dx,
-                      dy: globalToLocal.dy,
-                    ),
-                    paint:
-                        const PaintWrapper(isAntiAlias: true, strokeWidth: 2),
+          final renderBox = context.findRenderObject() as RenderBox?;
+          final globalToLocal =
+              renderBox?.globalToLocal(details.globalPosition);
+          context.read<GameCubit>().addPoints(
+                DrawingPointsWrappper(
+                  points: OffsetWrapper(
+                    dx: globalToLocal!.dx,
+                    dy: globalToLocal.dy,
                   ),
-                );
+                  paint: const PaintWrapper(isAntiAlias: true, strokeWidth: 2),
+                ),
+              );
+          print('drawing: something');
         },
         onPanStart: (details) {
-            final renderBox = context.findRenderObject() as RenderBox?;
-            final globalToLocal =
-                renderBox?.globalToLocal(details.globalPosition);
-            context.read<GameCubit>().addPoints(
-                  DrawingPointsWrappper(
-                    points: OffsetWrapper(
-                      dx: globalToLocal!.dx,
-                      dy: globalToLocal.dy,
-                    ),
-                    paint:
-                        const PaintWrapper(isAntiAlias: true, strokeWidth: 2),
+          final renderBox = context.findRenderObject() as RenderBox?;
+          final globalToLocal =
+              renderBox?.globalToLocal(details.globalPosition);
+          context.read<GameCubit>().addPoints(
+                DrawingPointsWrappper(
+                  points: OffsetWrapper(
+                    dx: globalToLocal!.dx,
+                    dy: globalToLocal.dy,
                   ),
-                );
+                  paint: const PaintWrapper(isAntiAlias: true, strokeWidth: 2),
+                ),
+              );
         },
         onPanEnd: (details) {
-            context.read<GameCubit>().addPoints(
-                  const DrawingPointsWrappper(
-                    points: null,
-                    paint: null,
-                  ),
-                );
+          context.read<GameCubit>().addPoints(
+                const DrawingPointsWrappper(
+                  points: null,
+                  paint: null,
+                ),
+              );
         },
         child: RepaintBoundary(
           child: Stack(

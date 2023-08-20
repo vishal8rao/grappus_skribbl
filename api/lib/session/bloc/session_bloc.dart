@@ -29,6 +29,5 @@ class SessionBloc extends BroadcastBloc<SessionEvent, SessionState> {
     emit(
       state.copyWith(points: event.points),
     );
-    print('added point: ${state.points}');
   }
 }
