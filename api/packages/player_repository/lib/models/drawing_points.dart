@@ -1,6 +1,8 @@
 
+import 'dart:convert';
+
 class DrawingPointsWrappper {
-  DrawingPointsWrappper({
+  const DrawingPointsWrappper({
     required this.points,
     required this.paint,
   });
@@ -35,7 +37,7 @@ class DrawingPointsWrappper {
 
   @override
   String toString() {
-    return 'DrawingPointsWrappper{points: $points, paint: $paint}';
+    return jsonEncode(toJson());
   }
 }
 
@@ -43,7 +45,7 @@ class PaintWrapper {
   final bool isAntiAlias;
   final double strokeWidth;
 
-  PaintWrapper({
+  const PaintWrapper({
     required this.isAntiAlias,
     required this.strokeWidth,
   });
@@ -64,12 +66,12 @@ class PaintWrapper {
 
   @override
   String toString() {
-    return 'PaintWrapper{isAntiAlias: $isAntiAlias, strokeWidth: $strokeWidth}';
+    return jsonEncode(toJson());
   }
 }
 
 class OffsetWrapper {
-  OffsetWrapper({
+  const OffsetWrapper({
     required this.dx,
     required this.dy,
   });
@@ -93,6 +95,6 @@ class OffsetWrapper {
 
   @override
   String toString() {
-    return 'OffsetWrapper{dx: $dx, dy: $dy}';
+    return jsonEncode(toJson());
   }
 }

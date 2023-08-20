@@ -40,5 +40,7 @@ class Player {
       Player.fromMap(json.decode(source) as Map<String, dynamic>);
 
   @override
-  String toString() => 'User(name: $name)';
+  String toString() {
+    return jsonEncode(toJson());
+  }
 }

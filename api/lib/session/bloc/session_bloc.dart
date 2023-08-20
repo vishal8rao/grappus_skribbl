@@ -20,23 +20,15 @@ class SessionBloc extends BroadcastBloc<SessionEvent, SessionState> {
       state.copyWith(
         players: players,
         playerId: event.player.userId,
-        pointsList: state.pointsList,
+        points: state.points,
       ),
     );
   }
 
   void _onAddPoints(OnPointsAdded event, Emitter<SessionState> emit) {
-    final newPointList = <DrawingPointsWrappper>[
-      ...state.pointsList,
-      event.points
-    ];
-
-    print('after adding point: $newPointList');
-
     emit(
-      state.copyWith(pointsList: newPointList),
+      state.copyWith(points: event.points),
     );
-
-    print('statepoint: ${state.pointsList}');
+    print('added point: ${state.points}');
   }
 }

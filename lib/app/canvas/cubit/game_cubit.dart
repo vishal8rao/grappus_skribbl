@@ -21,23 +21,11 @@ class GameCubit extends Cubit<GameState> {
     debugPrint('Connect');
     _sessionStateSub = _gameRepository.session.listen((sessionState) {
       emit(state.copyWith(sessionState: sessionState));
+      // print('points: ${state.sessionState?.pointsList}');
     });
-    // _sessionStateSub?.onData((data) {
-    //   print('player: ${data.pointsList}');
-    // });
   }
 
   Future<void> addPoints(DrawingPointsWrappper points) async {
-    try{
-      _gameRepository.sendPoints(points);
-      // _sessionStateSub = _gameRepository.session.listen((sessionState) {
-      //   emit(state.copyWith(sessionState: sessionState));
-      // });
-      // _sessionStateSub?.onData((data) {
-      //   print('data: ${data.pointsList}');
-      // });
-    }catch(e){
-      debugPrint('Exception here: $e');
-    }
+    _gameRepository.sendPoints(points);
   }
 }

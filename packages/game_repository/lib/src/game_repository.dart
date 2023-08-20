@@ -16,8 +16,8 @@ class GameRepository {
   Stream<SessionState> get session {
     return _ws.messages.cast<String>().map(
       (event) {
-        print("JSONDECODE" + jsonDecode(event).toString());
-
+        print('event  ${jsonDecode(event)}');
+        // print('event: $event');
         return SessionState.fromJson(jsonDecode(event) as Map<String, dynamic>);
       },
     );
