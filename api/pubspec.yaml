@@ -12,8 +12,6 @@ dependencies:
   dart_frog_web_socket: ^1.0.0
   equatable: ^2.0.5
   logging: ^1.2.0
-  models:
-    path: packages/models
   player_repository:
     path: packages/player_repository
   shelf_cors_headers: ^0.1.5

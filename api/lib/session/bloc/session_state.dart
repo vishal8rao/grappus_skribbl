@@ -13,7 +13,9 @@ class SessionState extends Equatable {
           (json['players'] as Iterable)
               .map((e) => Player.fromJson(e as String)),
         ),
-        points: DrawingPointsWrappper.fromJson(json['points'] as Map<String,dynamic>),
+        points: DrawingPointsWrappper.fromJson(
+          json['points'] as Map<String, dynamic>,
+        ),
       );
 
   final String playerId;

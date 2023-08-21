@@ -8,6 +8,7 @@ import 'package:player_repository/player_repository.dart';
 class DrawingCanvas extends StatelessWidget {
   DrawingCanvas({super.key});
 
+  // list of DrawingPoints to store points on client side
   final pointsList = <DrawingPoints>[];
 
   @override
@@ -15,6 +16,7 @@ class DrawingCanvas extends StatelessWidget {
     final players =
         context.select((GameCubit cubit) => cubit.state.sessionState?.players);
 
+    // to update the PointList whenever new point comes from server
     final newDrawingPoint = context.select((GameCubit cubit) {
       final sessionState = cubit.state.sessionState;
       if (sessionState != null) {
@@ -49,7 +51,6 @@ class DrawingCanvas extends StatelessWidget {
                   paint: const PaintWrapper(isAntiAlias: true, strokeWidth: 2),
                 ),
               );
-          print('drawing: something');
         },
         onPanStart: (details) {
           final renderBox = context.findRenderObject() as RenderBox?;
@@ -83,7 +84,7 @@ class DrawingCanvas extends StatelessWidget {
               Flexible(
                 child: ListView.builder(
                   itemBuilder: (context, index) => Text(
-                    players![index].userId ?? '',
+                    players![index].userId,
                     style: const TextStyle(color: Colors.black87),
                   ),
                   itemCount: players?.length,
