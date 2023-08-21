@@ -1,7 +1,13 @@
-import 'package:api/cubit/offset_cubit.dart';
+import 'package:api/session/bloc/session_bloc.dart';
 import 'package:dart_frog/dart_frog.dart';
 
-final _offsetCubit = OffsetCubit();
+import '../headers/headers.dart';
+
+final _sessionBloc = SessionBloc();
+
 Handler middleware(Handler handler) {
-  return handler.use(provider<OffsetCubit>((context) => _offsetCubit));
+  return handler
+      .use(requestLogger())
+      .use(provider<SessionBloc>((context) => _sessionBloc))
+      .use(corsHeaders());
 }

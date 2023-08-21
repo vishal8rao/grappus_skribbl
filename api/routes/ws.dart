@@ -1,30 +1,39 @@
 import 'dart:convert';
-import 'dart:math';
-
-import 'package:api/cubit/offset_cubit.dart';
+import 'package:api/session/bloc/session_bloc.dart';
 import 'package:dart_frog/dart_frog.dart';
 import 'package:dart_frog_web_socket/dart_frog_web_socket.dart';
-import 'package:models/events/websocket_event.dart';
+import 'package:player_repository/models/drawing_points.dart';
+import 'package:player_repository/models/player.dart';
+import 'package:uuid/uuid.dart';
 
 /// Websocket Handler
 Future<Response> onRequest(RequestContext context) async {
   final handler = webSocketHandler((channel, protocol) {
-    final offsetCubit = context.read<OffsetCubit>()..subscribe(channel);
+    final uid = const Uuid().v4();
+    final player = Player(
+      userId: uid,
+      name: 'name',
+    );
+    final sessionBloc = context.read<SessionBloc>()
+      ..subscribe(channel)
+      ..add(OnPlayerAdded(player));
 
-    channel.sink.add(offsetCubit.state.toString());
+    channel.sink.add(sessionBloc.state.toString());
 
-    channel.stream.listen((message) {
-      if (message is String && jsonDecode(message) is Map<String, dynamic>) {
-        final map = jsonDecode(message) as Map<String, dynamic>;
-        final eventName = map['eventName'];
-        switch (eventName) {
-          case AddMousePointerEvent.name:
-            final event = AddMousePointerEvent.fromMap(map);
-            offsetCubit.addOffset(Point(event.mouseX, event.mouseY));
-          default:
-        }
-      }
-    });
+    channel.stream.listen(
+      (data) {
+        final jsonData = jsonDecode(data.toString());
+        final receivedPoints =
+            DrawingPointsWrapper.fromJson(jsonData as Map<String, dynamic>);
+        sessionBloc.add(OnPointsAdded(receivedPoints));
+      },
+      onDone: () {
+        final currentUserId = sessionBloc.state.currentPlayerId;
+        sessionBloc
+          ..add(OnPlayerDisconnect(currentUserId))
+          ..unsubscribe(channel);
+      },
+    );
   });
   return handler(context);
 }

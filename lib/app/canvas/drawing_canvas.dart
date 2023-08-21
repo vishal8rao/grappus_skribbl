@@ -1,62 +1,96 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:grappus_skribbl/app/canvas/cubit/game_cubit.dart';
+import 'package:player_repository/player_repository.dart';
 
-class DrawingCanvas extends StatefulWidget {
-  const DrawingCanvas({super.key});
+class DrawingCanvas extends StatelessWidget {
+  DrawingCanvas({super.key});
 
-  @override
-  State<DrawingCanvas> createState() => _DrawingCanvasState();
-}
-
-class _DrawingCanvasState extends State<DrawingCanvas> {
-  final points = <DrawingPoints>[];
+  // list of DrawingPoints to store points on client side
+  final pointsList = <DrawingPoints>[];
 
   @override
   Widget build(BuildContext context) {
-    final paint = Paint()
-      ..isAntiAlias = true
-      ..strokeWidth = 2;
+    final players =
+        context.select((GameCubit cubit) => cubit.state.sessionState?.players);
+
+    // to update the PointList whenever new point comes from server
+    final newDrawingPoint = context.select((GameCubit cubit) {
+      final sessionState = cubit.state.sessionState;
+      if (sessionState != null) {
+        final data = sessionState.points;
+        final points = data.points != null
+            ? Offset(data.points!.dx, data.points!.dy)
+            : null;
+        final paint = data.paint != null
+            ? (Paint()
+              ..isAntiAlias = data.paint!.isAntiAlias
+              ..strokeWidth = data.paint!.strokeWidth)
+            : null;
+        return DrawingPoints(points: points, paint: paint);
+      }
+      return DrawingPoints(points: null, paint: null);
+    });
+
+    pointsList.add(newDrawingPoint);
 
     return Scaffold(
       body: GestureDetector(
         onPanUpdate: (details) {
-          setState(() {
-            final renderBox = context.findRenderObject() as RenderBox?;
-            final globalToLocal =
-                renderBox?.globalToLocal(details.globalPosition);
-            points.add(
-              DrawingPoints(
-                points: globalToLocal,
-                paint: paint,
-              ),
-            );
-          });
+          final renderBox = context.findRenderObject() as RenderBox?;
+          final globalToLocal =
+              renderBox?.globalToLocal(details.globalPosition);
+          context.read<GameCubit>().addPoints(
+                DrawingPointsWrapper(
+                  points: OffsetWrapper(
+                    dx: globalToLocal!.dx,
+                    dy: globalToLocal.dy,
+                  ),
+                  paint: const PaintWrapper(isAntiAlias: true, strokeWidth: 2),
+                ),
+              );
         },
         onPanStart: (details) {
-          setState(() {
-            final renderBox = context.findRenderObject() as RenderBox?;
-            final globalToLocal =
-                renderBox?.globalToLocal(details.globalPosition);
-            points.add(
-              DrawingPoints(
-                points: globalToLocal,
-                paint: paint,
-              ),
-            );
-          });
+          final renderBox = context.findRenderObject() as RenderBox?;
+          final globalToLocal =
+              renderBox?.globalToLocal(details.globalPosition);
+          context.read<GameCubit>().addPoints(
+                DrawingPointsWrapper(
+                  points: OffsetWrapper(
+                    dx: globalToLocal!.dx,
+                    dy: globalToLocal.dy,
+                  ),
+                  paint: const PaintWrapper(isAntiAlias: true, strokeWidth: 2),
+                ),
+              );
         },
         onPanEnd: (details) {
-          setState(() {
-            points.add(DrawingPoints(points: null, paint: null));
-          });
+          context.read<GameCubit>().addPoints(
+                const DrawingPointsWrapper(
+                  points: null,
+                  paint: null,
+                ),
+              );
         },
         child: RepaintBoundary(
-          child: CustomPaint(
-            size: Size.infinite,
-            painter: DrawingPainter(
-              pointsList: points,
-            ),
+          child: Stack(
+            children: [
+              CustomPaint(
+                size: Size.infinite,
+                painter: DrawingPainter(pointsList: pointsList),
+              ),
+              Flexible(
+                child: ListView.builder(
+                  itemBuilder: (context, index) => Text(
+                    players![index].userId,
+                    style: const TextStyle(color: Colors.black87),
+                  ),
+                  itemCount: players?.length,
+                ),
+              ),
+            ],
           ),
         ),
       ),
@@ -77,6 +111,7 @@ class DrawingPainter extends CustomPainter {
     for (var i = 0; i < pointsList.length - 1; i++) {
       final currentValue = pointsList[i];
       final nextValue = pointsList[i + 1];
+
       if (currentValue.isNotNull && nextValue.isNotNull) {
         canvas.drawLine(
           currentValue.points!,
@@ -118,4 +153,9 @@ class DrawingPoints {
   bool get isNotNull => points != null && paint != null;
 
   bool get isNull => points == null || paint == null;
+
+  @override
+  String toString() {
+    return '{paint: $paint, points: $points}';
+  }
 }
