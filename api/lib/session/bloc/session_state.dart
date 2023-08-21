@@ -1,18 +1,20 @@
-part of 'session_bloc.dart';
+import 'package:equatable/equatable.dart';
+import 'package:json_annotation/json_annotation.dart';
+import 'package:player_repository/player_repository.dart';
 
+part 'session_state.g.dart';
+
+@JsonSerializable()
 class SessionState extends Equatable {
   const SessionState({
     this.playerId,
     this.players = const [],
   });
 
-  factory SessionState.fromJson(Map<String, dynamic> json) => SessionState(
-        playerId: json['playerId'] as String,
-        players: List<Player>.from((json['players'] as Iterable)
-            .map((e) => Player.fromJson(e as String))),
-      );
-
+  //TODO(**): current player
   final String? playerId;
+
+  //TODO(*): Change to map
   final List<Player> players;
 
   SessionState copyWith({
@@ -24,11 +26,13 @@ class SessionState extends Equatable {
         players: players ?? this.players,
       );
 
+  /// Deserializes the given `Map<String, dynamic>` into a [SessionState].
+  static SessionState fromJson(Map<String, dynamic> json) =>
+      _$SessionStateFromJson(json);
+
+  /// Converts this [SessionState] into a `Map<String, dynamic>`.
+  Map<String, dynamic> toJson() => _$SessionStateToJson(this);
+
   @override
   List<Object?> get props => [playerId, players];
-
-  Map<String, dynamic> toJson() => {
-        'players': List<dynamic>.from(players.map((x) => x)),
-        'playerId': playerId,
-      };
 }

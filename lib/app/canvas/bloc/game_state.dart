@@ -1,4 +1,4 @@
-part of 'game_cubit.dart';
+part of 'game_bloc.dart';
 
 class GameState extends Equatable {
   const GameState({this.sessionState});
@@ -11,3 +11,5 @@ class GameState extends Equatable {
   @override
   List<Object?> get props => [sessionState];
 }
+
+

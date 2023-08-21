@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:game_repository/game_repository.dart';
-import 'package:grappus_skribbl/app/canvas/cubit/game_cubit.dart';
+import 'package:grappus_skribbl/app/canvas/bloc/game_bloc.dart';
 import 'package:grappus_skribbl/app/canvas/drawing_canvas.dart';
 import 'package:grappus_skribbl/l10n/l10n.dart';
 
@@ -13,11 +13,11 @@ class App extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (context) => GameCubit(
+          create: (context) => GameBloc(
             gameRepository: GameRepository(
               uri: Uri.parse('ws://localhost:8080/ws'),
             ),
-          )..connect(),
+          )..add(OnGameConnected()),
         )
       ],
       child: MaterialApp(
