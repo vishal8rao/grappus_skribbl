@@ -23,7 +23,7 @@ class GameRepository {
   }
 
   /// function to send the points to the server
-  void sendPoints(DrawingPointsWrappper points) => _ws.send(points.toString());
+  void sendPoints(DrawingPointsWrapper points) => _ws.send(points.toString());
 
   /// function to get the connection
   Stream<ConnectionState> get connection => _ws.connection;

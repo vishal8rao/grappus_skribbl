@@ -43,7 +43,7 @@ class DrawingCanvas extends StatelessWidget {
           final globalToLocal =
               renderBox?.globalToLocal(details.globalPosition);
           context.read<GameCubit>().addPoints(
-                DrawingPointsWrappper(
+                DrawingPointsWrapper(
                   points: OffsetWrapper(
                     dx: globalToLocal!.dx,
                     dy: globalToLocal.dy,
@@ -57,7 +57,7 @@ class DrawingCanvas extends StatelessWidget {
           final globalToLocal =
               renderBox?.globalToLocal(details.globalPosition);
           context.read<GameCubit>().addPoints(
-                DrawingPointsWrappper(
+                DrawingPointsWrapper(
                   points: OffsetWrapper(
                     dx: globalToLocal!.dx,
                     dy: globalToLocal.dy,
@@ -68,7 +68,7 @@ class DrawingCanvas extends StatelessWidget {
         },
         onPanEnd: (details) {
           context.read<GameCubit>().addPoints(
-                const DrawingPointsWrappper(
+                const DrawingPointsWrapper(
                   points: null,
                   paint: null,
                 ),

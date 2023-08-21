@@ -20,12 +20,18 @@ Future<Response> onRequest(RequestContext context) async {
 
     channel.sink.add(sessionBloc.state.toString());
 
-    channel.stream.listen((data) {
-      final jsonData = jsonDecode(data.toString());
-      final receivedPoints =
-          DrawingPointsWrappper.fromJson(jsonData as Map<String, dynamic>);
-      sessionBloc.add(OnPointsAdded(receivedPoints));
-    });
+    channel.stream.listen(
+      (data) {
+        final jsonData = jsonDecode(data.toString());
+        final receivedPoints =
+            DrawingPointsWrapper.fromJson(jsonData as Map<String, dynamic>);
+        sessionBloc.add(OnPointsAdded(receivedPoints));
+      },
+      onDone: () {
+        final currentUserId = sessionBloc.state.currentPlayerId;
+        sessionBloc.add(OnPlayerDisconnect(currentUserId));
+      },
+    );
   });
   return handler(context);
 }

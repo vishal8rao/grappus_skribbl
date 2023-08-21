@@ -12,6 +12,7 @@ class SessionBloc extends BroadcastBloc<SessionEvent, SessionState> {
   SessionBloc() : super(const SessionState()) {
     on<OnPlayerAdded>(_onPlayerAdded);
     on<OnPointsAdded>(_onAddPoints);
+    on<OnPlayerDisconnect>(_onPlayerDisconnect);
   }
 
   void _onPlayerAdded(OnPlayerAdded event, Emitter<SessionState> emit) {
@@ -19,7 +20,7 @@ class SessionBloc extends BroadcastBloc<SessionEvent, SessionState> {
     emit(
       state.copyWith(
         players: players,
-        playerId: event.player.userId,
+        currentPlayerId: event.player.userId,
         points: state.points,
       ),
     );
@@ -28,6 +29,17 @@ class SessionBloc extends BroadcastBloc<SessionEvent, SessionState> {
   void _onAddPoints(OnPointsAdded event, Emitter<SessionState> emit) {
     emit(
       state.copyWith(points: event.points),
+    );
+  }
+
+  void _onPlayerDisconnect(
+      OnPlayerDisconnect event, Emitter<SessionState> emit) {
+    final players = [
+      ...state.players,
+    ]..removeWhere((player) => player.userId == event.userId);
+
+    emit(
+      state.copyWith(players: players),
     );
   }
 }

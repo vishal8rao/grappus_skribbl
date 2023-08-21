@@ -16,8 +16,17 @@ class OnPlayerAdded extends SessionEvent {
 class OnPointsAdded extends SessionEvent {
   const OnPointsAdded(this.points);
 
-  final DrawingPointsWrappper points;
+  final DrawingPointsWrapper points;
 
   @override
   List<Object?> get props => [points];
+}
+
+class OnPlayerDisconnect extends SessionEvent {
+  const OnPlayerDisconnect(this.userId);
+
+  final String userId;
+
+  @override
+  List<Object?> get props => [userId];
 }

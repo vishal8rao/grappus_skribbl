@@ -1,8 +1,8 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
-class DrawingPointsWrappper {
-  const DrawingPointsWrappper({
+class DrawingPointsWrapper {
+  const DrawingPointsWrapper({
     required this.points,
     required this.paint,
   });
@@ -21,8 +21,8 @@ class DrawingPointsWrappper {
     };
   }
 
-  factory DrawingPointsWrappper.fromJson(Map<String, dynamic> json) {
-    return DrawingPointsWrappper(
+  factory DrawingPointsWrapper.fromJson(Map<String, dynamic> json) {
+    return DrawingPointsWrapper(
       points: json['points'] != null
           ? OffsetWrapper.fromJson(json['points'] as Map<String, dynamic>)
           : null,

@@ -24,7 +24,15 @@ class GameCubit extends Cubit<GameState> {
     });
   }
 
-  Future<void> addPoints(DrawingPointsWrappper points) async {
+  Future<void> addPoints(DrawingPointsWrapper points) async {
     _gameRepository.sendPoints(points);
   }
+
+  @override
+  Future<void> close() async{
+    await _sessionStateSub?.cancel();
+    _gameRepository.close();
+    return super.close();
+  }
+
 }
