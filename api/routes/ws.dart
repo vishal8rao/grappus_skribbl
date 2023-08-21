@@ -29,7 +29,9 @@ Future<Response> onRequest(RequestContext context) async {
       },
       onDone: () {
         final currentUserId = sessionBloc.state.currentPlayerId;
-        sessionBloc.add(OnPlayerDisconnect(currentUserId));
+        sessionBloc
+          ..add(OnPlayerDisconnect(currentUserId))
+          ..unsubscribe(channel);
       },
     );
   });
