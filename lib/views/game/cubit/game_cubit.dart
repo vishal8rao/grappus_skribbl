@@ -3,10 +3,8 @@ import 'dart:async';
 import 'package:api/session/bloc/session_bloc.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:flutter/material.dart';
 import 'package:game_repository/game_repository.dart';
 import 'package:player_repository/models/drawing_points.dart';
-import 'package:player_repository/models/room.dart';
 
 part 'game_state.dart';
 
@@ -16,35 +14,22 @@ class GameCubit extends Cubit<GameState> {
         super(const GameState());
 
   final GameRepository _gameRepository;
-  StreamSubscription<Room>? _roomStreamSubscription;
+  StreamSubscription<SessionState>? _sessionStateSub;
 
   Future<void> connect() async {
-    debugPrint('Connect');
-    try {
-      _roomStreamSubscription = _gameRepository.session.listen((room) {
-        emit(state.copyWith(room: room));
-      });
-    } catch (e) {
-      print('Session state subscription error: $e');
-    }
+    _sessionStateSub = _gameRepository.session.listen((sessionState) {
+      emit(state.copyWith(sessionState: sessionState));
+    });
   }
 
   Future<void> addPoints(DrawingPointsWrapper points) async {
-    try {
-      _gameRepository.sendPoints(points);
-    } catch (e) {
-      print('Sending points error from GameCubit: $e');
-    }
+    _gameRepository.sendPoints(points);
   }
 
   @override
   Future<void> close() async {
-    await _roomStreamSubscription?.cancel();
-    try {
-      _gameRepository.close();
-    } catch (e) {
-      print('Closing connection error from GameCubit: $e');
-    }
+    await _sessionStateSub?.cancel();
+    _gameRepository.close();
     return super.close();
   }
 }
