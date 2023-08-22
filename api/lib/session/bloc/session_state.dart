@@ -8,7 +8,7 @@ class SessionState extends Equatable {
   });
 
   factory SessionState.fromJson(Map<String, dynamic> json) => SessionState(
-    currentPlayerId: json['currentPlayerId'] as String,
+        currentPlayerId: json['currentPlayerId'] as String,
         players: List<Player>.from(
           (json['players'] as Iterable)
               .map((e) => Player.fromJson(e as String)),

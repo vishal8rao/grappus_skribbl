@@ -5,9 +5,11 @@ import 'package:grappus_skribbl/views/views.dart';
 class LoginPage extends StatelessWidget {
   LoginPage({super.key});
 
-  final TextEditingController _urlController = TextEditingController();
+  final TextEditingController _gameUrlController =
+      TextEditingController(text: 'ws://localhost:8080/ws/ws');
   final TextEditingController _nameController = TextEditingController();
-
+  final TextEditingController _chatUrlController =
+      TextEditingController(text: 'ws://localhost:8080/ws/chat');
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -19,14 +21,22 @@ class LoginPage extends StatelessWidget {
               color: AppColors.spiroDiscoBall,
             ),
             padding: const EdgeInsets.all(30).responsive(context),
-            margin: EdgeInsets.symmetric(horizontal: 15),
+            margin: const EdgeInsets.symmetric(horizontal: 15),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               mainAxisSize: MainAxisSize.min,
               children: [
                 CurvedTextField(
-                  controller: _urlController,
-                  hintText: 'Enter URL',
+                  controller: _gameUrlController,
+                  hintText: 'Enter Game URL',
+                  fillColor: AppColors.spiroDiscoBallDark,
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                CurvedTextField(
+                  controller: _chatUrlController,
+                  hintText: 'Enter Chat URL',
                   fillColor: AppColors.spiroDiscoBallDark,
                 ),
                 CurvedTextField(
@@ -45,7 +55,10 @@ class LoginPage extends StatelessWidget {
                   ),
                   onPressed: () => Navigator.of(context).push<Widget>(
                     MaterialPageRoute(
-                      builder: (context) => GamePage(url: _urlController.text),
+                      builder: (context) => GamePage(
+                        url: _gameUrlController.text,
+                        chatUrl: _chatUrlController.text,
+                      ),
                     ),
                   ),
                   child: Text(
