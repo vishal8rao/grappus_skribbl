@@ -16,7 +16,7 @@ class SessionBloc extends BroadcastBloc<SessionEvent, SessionState> {
   }
 
   void _onPlayerAdded(OnPlayerAdded event, Emitter<SessionState> emit) {
-    var players = <Player>[...state.players, event.player];
+    final players = <Player>[...state.players, event.player];
     emit(
       state.copyWith(
         players: players,
@@ -33,7 +33,9 @@ class SessionBloc extends BroadcastBloc<SessionEvent, SessionState> {
   }
 
   void _onPlayerDisconnect(
-      OnPlayerDisconnect event, Emitter<SessionState> emit) {
+    OnPlayerDisconnect event,
+    Emitter<SessionState> emit,
+  ) {
     final players = [
       ...state.players,
     ]..removeWhere((player) => player.userId == event.userId);

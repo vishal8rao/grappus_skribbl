@@ -21,6 +21,8 @@ dependencies:
   intl: ^0.18.0
   player_repository:
     path: api/packages/player_repository
+  app_ui:
+    path: packages/app_ui
 
 dev_dependencies:
   bloc_test: ^9.1.2
