@@ -19,25 +19,17 @@ class SessionBloc extends BroadcastBloc<SessionEvent, SessionState> {
 
   void _onPlayerAdded(OnPlayerAdded event, Emitter<SessionState> emit) {
     final currentPlayerId = event.player.userId;
-    final currentPlayerDrawingId = currentPlayerId;
-    final roomId = const Uuid().v4();
-
-    final room = state.room.copyWith(
-      players: <Player>[...state.room.players, event.player],
-      currentPlayerDrawingId: currentPlayerDrawingId,
-      currentPlayerId: currentPlayerDrawingId,
-      roomId: state.room.roomId.isEmpty ? roomId : state.room.roomId,
-    );
     emit(
       state.copyWith(
-        room: room,
+        players: <Player>[...state.players, event.player],
+        currentPlayerDrawingId: '',
+        currentPlayerId: currentPlayerId,
       ),
     );
   }
 
   void _onAddPoints(OnPointsAdded event, Emitter<SessionState> emit) {
-    final room = state.room.copyWith(points: event.points);
-    emit(state.copyWith(room: room));
+    emit(state.copyWith(points: event.points));
   }
 
   void _onPlayerDisconnect(
@@ -45,12 +37,10 @@ class SessionBloc extends BroadcastBloc<SessionEvent, SessionState> {
     Emitter<SessionState> emit,
   ) {
     final players = [
-      ...state.room.players,
+      ...state.players,
     ]..removeWhere((player) => player.userId == event.userId);
-
-    final room = state.room.copyWith(players: players);
     emit(
-      state.copyWith(room: room),
+      state.copyWith(players: players),
     );
   }
 }

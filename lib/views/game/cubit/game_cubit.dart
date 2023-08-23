@@ -16,13 +16,14 @@ class GameCubit extends Cubit<GameState> {
         super(const GameState());
 
   final GameRepository _gameRepository;
-  StreamSubscription<Room>? _roomStreamSubscription;
+  StreamSubscription<SessionState>? _sessionStateSubscription;
 
   Future<void> connect() async {
     debugPrint('Connect');
     try {
-      _roomStreamSubscription = _gameRepository.session.listen((room) {
-        emit(state.copyWith(room: room));
+      _sessionStateSubscription =
+          _gameRepository.session.listen((sessionState) {
+        emit(state.copyWith(sessionState: sessionState));
       });
     } catch (e) {
       print('Session state subscription error: $e');
@@ -39,7 +40,7 @@ class GameCubit extends Cubit<GameState> {
 
   @override
   Future<void> close() async {
-    await _roomStreamSubscription?.cancel();
+    await _sessionStateSubscription?.cancel();
     try {
       _gameRepository.close();
     } catch (e) {

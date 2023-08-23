@@ -35,17 +35,17 @@ class _GamePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<GameCubit>();
-    final roomState = context.select((GameCubit cubit) => cubit.state.room);
+    final sessionState = context.select((GameCubit cubit) => cubit.state.sessionState);
 
-    if (roomState != null) {
-      players = roomState.players;
-      drawingPlayerId = roomState.currentPlayerDrawingId;
+    if (sessionState != null) {
+      players = sessionState.players;
+      drawingPlayerId = sessionState.currentPlayerDrawingId;
 
       if (currentPlayerId.isEmpty) {
-        currentPlayerId = roomState.currentPlayerId;
+        currentPlayerId = sessionState.currentPlayerId;
       }
 
-      final newDrawingPoint = roomState.points.toDrawingPoints();
+      final newDrawingPoint = sessionState.points.toDrawingPoints();
       pointsList.add(newDrawingPoint);
     }
 

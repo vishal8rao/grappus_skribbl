@@ -4,18 +4,18 @@ enum GameStatus { connected, disconnected }
 
 class GameState extends Equatable {
   const GameState({
-    this.room,
+    this.sessionState,
   });
 
-  final Room? room;
+  final SessionState? sessionState;
 
   GameState copyWith({
-    Room? room,
+    SessionState? sessionState,
   }) =>
       GameState(
-        room: room ?? this.room,
+        sessionState: sessionState ?? this.sessionState,
       );
 
   @override
-  List<Object?> get props => [room];
+  List<Object?> get props => [sessionState];
 }

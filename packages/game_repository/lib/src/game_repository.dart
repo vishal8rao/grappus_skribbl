@@ -15,10 +15,10 @@ class GameRepository {
   final WebSocket _ws;
 
   /// function to get the current session data stream
-  Stream<Room> get session => _ws.messages.cast<String>().map(
+  Stream<SessionState> get session => _ws.messages.cast<String>().map(
         (event) {
           try {
-            return Room.fromJson(
+            return SessionState.fromJson(
               jsonDecode(event) as Map<String, dynamic>,
             );
           } catch (e) {

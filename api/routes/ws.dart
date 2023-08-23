@@ -18,7 +18,7 @@ Future<Response> onRequest(RequestContext context) async {
         ..subscribe(channel)
         ..add(OnPlayerAdded(player));
 
-      channel.sink.add(sessionBloc.state.room.toString());
+      channel.sink.add(sessionBloc.state.toString());
 
       channel.stream.listen(
         (data) {
@@ -32,7 +32,7 @@ Future<Response> onRequest(RequestContext context) async {
           }
         },
         onDone: () {
-          final currentUserId = sessionBloc.state.room.currentPlayerId;
+          final currentUserId = sessionBloc.state.currentPlayerId;
           sessionBloc
             ..add(OnPlayerDisconnect(currentUserId))
             ..unsubscribe(channel);
