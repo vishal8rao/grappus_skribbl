@@ -17,6 +17,9 @@ enum EventType {
   Map<String, dynamic> toJson() {
     return {'eventType': this.name};
   }
+
+  factory EventType.fromJson(Map<String, dynamic> json) => EventType.values
+      .firstWhere((element) => element.name == json['eventType']);
 }
 
 abstract class WebSocketEvent<T> {
@@ -67,6 +70,9 @@ class AddPlayerEvent extends WebSocketEvent<String> {
 
   @override
   Map<String, dynamic> toJson() {
-    return {'eventType': eventType.name, 'data': data};
+    return {
+      'eventType': eventType.name,
+      'data': {'name': data},
+    };
   }
 }

@@ -26,11 +26,11 @@ class _ChatComponentState extends State<ChatComponent> {
               child: BlocBuilder<GameCubit, GameState>(
                 bloc: context.read<GameCubit>(),
                 builder: (context, state) {
-                  final chatState = state.chatState;
-                  if (chatState == null) {
+                  final sessionState = state.sessionState;
+                  if (sessionState == null) {
                     return const SizedBox();
                   }
-                  final messages = chatState.messages;
+                  final messages = sessionState.messages;
                   return ListView.builder(
                     itemCount: messages.length,
                     itemBuilder: (context, index) {

@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:api/session/bloc/session_bloc.dart';
+import 'package:models/chat_model.dart';
 import 'package:models/drawing_points.dart';
 import 'package:models/web_socket_event.dart';
 import 'package:models/web_socket_response.dart';
@@ -20,15 +21,11 @@ class GameRepository {
     return _ws.messages.cast<String>().map(
       (event) {
         final map = jsonDecode(event) as Map<String, dynamic>;
-        print("sdfsd"+ map.toString());
         if (map['eventType'] == null) {
           return null;
         }
         final response = WebSocketResponse.fromMap(map);
-        if (response.eventType == EventType.drawing) {
-          return SessionState.fromJson(response.data);
-        }
-        if (response.eventType == EventType.addPlayer) {
+        if (response.eventType != EventType.invalid) {
           return SessionState.fromJson(response.data);
         }
         return null;
@@ -43,6 +40,11 @@ class GameRepository {
   /// function to add player to the server
   void addPlayer(String name) =>
       _ws.send(AddPlayerEvent(data: name).encodedJson);
+
+  /// function to send the chats to the server
+  void sendChat(ChatModel chat) {
+    _ws.send(AddToChatEvent(data: chat).encodedJson);
+  }
 
   /// function to get the connection
   Stream<ConnectionState> get connection => _ws.connection;

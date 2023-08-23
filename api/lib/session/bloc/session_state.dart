@@ -6,6 +6,7 @@ class SessionState extends Equatable {
     this.players = const [],
     this.points = const DrawingPointsWrapper(points: null, paint: null),
     this.eventType = EventType.invalid,
+    this.messages = const [],
   });
 
   factory SessionState.fromJson(Map<String, dynamic> json) => SessionState(
@@ -17,25 +18,33 @@ class SessionState extends Equatable {
         points: DrawingPointsWrapper.fromJson(
           json['points'] as Map<String, dynamic>,
         ),
-        eventType: json['evenType'] as EventType,
+        eventType: EventType.fromJson(json['eventType'] as Map<String, dynamic>),
+        messages: List<ChatModel>.from(
+          (json['messages'] as List<dynamic>).map<ChatModel>(
+            (x) => ChatModel.fromMap(x as Map<String, dynamic>),
+          ),
+        ),
       );
 
   final String currentPlayerId;
   final List<Player> players;
   final DrawingPointsWrapper points;
   final EventType eventType;
+  final List<ChatModel> messages;
 
   SessionState copyWith({
     String? currentPlayerId,
     List<Player>? players,
     DrawingPointsWrapper? points,
     EventType? eventType,
+    List<ChatModel>? messages,
   }) {
     return SessionState(
       currentPlayerId: currentPlayerId ?? this.currentPlayerId,
       players: players ?? this.players,
       points: points ?? this.points,
       eventType: eventType ?? this.eventType,
+      messages: messages ?? this.messages,
     );
   }
 
@@ -45,6 +54,7 @@ class SessionState extends Equatable {
         currentPlayerId,
         players,
         eventType,
+        messages,
       ];
 
   Map<String, dynamic> toJson() => {
@@ -52,6 +62,7 @@ class SessionState extends Equatable {
         'currentPlayerId': currentPlayerId,
         'points': points.toJson(),
         'eventType': eventType.toJson(),
+        'messages': messages.map((x) => x.toMap()).toList()
       };
 
   @override
