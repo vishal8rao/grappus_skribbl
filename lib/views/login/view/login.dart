@@ -19,7 +19,7 @@ class LoginPage extends StatelessWidget {
               color: AppColors.spiroDiscoBall,
             ),
             padding: const EdgeInsets.all(30).responsive(context),
-            margin: EdgeInsets.symmetric(horizontal: 15),
+            margin: const EdgeInsets.symmetric(horizontal: 15),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               mainAxisSize: MainAxisSize.min,

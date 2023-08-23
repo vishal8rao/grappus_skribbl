@@ -18,7 +18,6 @@ class GameCubit extends Cubit<GameState> {
   StreamSubscription<Room>? _roomStreamSubscription;
 
   Future<void> connect() async {
-    debugPrint('Connect');
     try {
       _roomStreamSubscription = _gameRepository.session.listen((room) {
         emit(state.copyWith(room: room));
