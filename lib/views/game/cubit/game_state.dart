@@ -1,7 +1,5 @@
 part of 'game_cubit.dart';
 
-enum GameStatus { connected, disconnected }
-
 class GameState extends Equatable {
   const GameState({
     this.sessionState,
