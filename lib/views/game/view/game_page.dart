@@ -35,7 +35,9 @@ class _GamePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<GameCubit>();
-    final sessionState = context.select((GameCubit cubit) => cubit.state.sessionState);
+    final sessionState = context.select(
+      (GameCubit cubit) => cubit.state.sessionState,
+    );
 
     if (sessionState != null) {
       players = sessionState.players;
