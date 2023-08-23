@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:api/session/bloc/session_bloc.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 import 'package:game_repository/game_repository.dart';
 import 'package:player_repository/models/drawing_points.dart';
 import 'package:player_repository/models/room.dart';
