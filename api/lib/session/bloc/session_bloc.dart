@@ -2,7 +2,10 @@ import 'dart:convert';
 
 import 'package:broadcast_bloc/broadcast_bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:player_repository/player_repository.dart';
+import 'package:models/drawing_points.dart';
+import 'package:models/player.dart';
+import 'package:models/web_socket_event.dart';
+import 'package:models/web_socket_response.dart';
 
 part 'session_event.dart';
 
@@ -24,6 +27,14 @@ class SessionBloc extends BroadcastBloc<SessionEvent, SessionState> {
         points: state.points,
       ),
     );
+  }
+
+  @override
+  Object toMessage(SessionState state) {
+    return WebSocketResponse(
+      data: state.toJson(),
+      eventType: EventType.drawing,
+    ).encodedJson();
   }
 
   void _onAddPoints(OnPointsAdded event, Emitter<SessionState> emit) {

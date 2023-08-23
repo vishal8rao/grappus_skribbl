@@ -19,11 +19,15 @@ dependencies:
   game_repository:
     path: packages/game_repository
   intl: ^0.18.0
+  models:
+    path: api/packages/models
   player_repository:
     path: api/packages/player_repository
   app_ui:
     path: packages/app_ui
 
+  chat_repository:
+    path: packages/chat_repository
 dev_dependencies:
   bloc_test: ^9.1.2
   flutter_test:
