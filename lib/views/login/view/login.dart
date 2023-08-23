@@ -6,10 +6,9 @@ class LoginPage extends StatelessWidget {
   LoginPage({super.key});
 
   final TextEditingController _gameUrlController =
-      TextEditingController(text: 'ws://localhost:8080/ws/ws');
+      TextEditingController(text: 'ws://localhost:8080/ws');
   final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _chatUrlController =
-      TextEditingController(text: 'ws://localhost:8080/ws/chat');
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,14 +30,6 @@ class LoginPage extends StatelessWidget {
                   hintText: 'Enter Game URL',
                   fillColor: AppColors.spiroDiscoBallDark,
                 ),
-                const SizedBox(
-                  height: 10,
-                ),
-                CurvedTextField(
-                  controller: _chatUrlController,
-                  hintText: 'Enter Chat URL',
-                  fillColor: AppColors.spiroDiscoBallDark,
-                ),
                 CurvedTextField(
                   controller: _nameController,
                   hintText: 'Enter Name',
@@ -57,7 +48,6 @@ class LoginPage extends StatelessWidget {
                     MaterialPageRoute(
                       builder: (context) => GamePage(
                         url: _gameUrlController.text,
-                        chatUrl: _chatUrlController.text,
                       ),
                     ),
                   ),

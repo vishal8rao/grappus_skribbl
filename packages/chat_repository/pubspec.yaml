@@ -9,6 +9,8 @@ environment:
 dependencies:
   api:
     path: ../../api
+  models:
+    path: ../../api/packages/models
   player_repository:
     path: ../../api/packages/player_repository
   web_socket_client: ^0.1.0

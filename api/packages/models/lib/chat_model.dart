@@ -1,10 +1,9 @@
 import 'dart:convert';
 
-import 'package:equatable/equatable.dart';
-import 'package:player_repository/player_repository.dart';
+import 'package:models/player.dart';
 
 // ignore_for_file: public_member_api_docs, sort_constructors_first
-class ChatModel extends Equatable {
+class ChatModel {
   final Player player;
   final String message;
   const ChatModel({

@@ -245,7 +245,7 @@ class CurvedTextField extends StatelessWidget {
                             fontWeight: FontWeight.w500,
                           ),
                   errorStyle: errorTextStyle ??
-                      context.textTheme.bodyText1?.copyWith(
+                      context.textTheme.bodyLarge?.copyWith(
                         fontSize: 2,
                       ),
                   floatingLabelBehavior: FloatingLabelBehavior.auto,

@@ -1,7 +1,9 @@
 import 'dart:convert';
 
-import 'package:api/chat/chat_model.dart';
 import 'package:api/chat/chat_state.dart';
+import 'package:models/chat_model.dart';
+import 'package:models/web_socket_event.dart';
+import 'package:models/web_socket_response.dart';
 import 'package:web_socket_client/web_socket_client.dart';
 
 class ChatRepository {
@@ -10,17 +12,25 @@ class ChatRepository {
   final WebSocket _ws;
 
   /// function to get the current session chatting data from stream
-  Stream<ChatState> get session {
+  Stream<ChatState?> get session {
     return _ws.messages.cast<String>().map(
       (event) {
-        return ChatState.fromMap(jsonDecode(event) as Map<String, dynamic>);
+        final map = jsonDecode(event) as Map<String, dynamic>;
+        if (map['eventType'] == null) {
+          return null;
+        }
+        final response = WebSocketResponse.fromMap(map);
+        if (response.eventType == EventType.chat) {
+          return ChatState.fromMap(response.data);
+        }
+        return null;
       },
     );
   }
 
   /// function to send the chats to the server
   void sendChat(ChatModel chat) {
-    _ws.send(chat.toJson());
+    _ws.send(AddToChatEvent(data: chat).encodedJson);
   }
 
   /// function to get the connection

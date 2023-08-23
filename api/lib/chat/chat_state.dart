@@ -1,8 +1,8 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
-import 'package:api/chat/chat_model.dart';
 import 'package:equatable/equatable.dart';
+import 'package:models/chat_model.dart';
 
 class ChatState extends Equatable {
   const ChatState(this.messages);
@@ -19,8 +19,7 @@ class ChatState extends Equatable {
     );
   }
 
-  @override
-  String toString() {
+  String encodedJson() {
     return toJson();
   }
 

@@ -42,9 +42,12 @@ class SessionState extends Equatable {
         'currentPlayerId': currentPlayerId,
         'points': points.toJson(),
       };
-
   @override
   String toString() {
+    return encodedJson();
+  }
+
+  String encodedJson() {
     return jsonEncode(toJson());
   }
 }

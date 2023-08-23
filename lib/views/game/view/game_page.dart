@@ -6,13 +6,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:game_repository/game_repository.dart';
 import 'package:grappus_skribbl/app/view/chat_component/chat_component.dart';
 import 'package:grappus_skribbl/views/views.dart';
-import 'package:player_repository/player_repository.dart';
+import 'package:models/drawing_points.dart';
 
 class GamePage extends StatelessWidget {
-  const GamePage({required this.url, required this.chatUrl, super.key});
+  const GamePage({required this.url, super.key});
 
   final String url;
-  final String chatUrl;
 
   @override
   Widget build(BuildContext context) {
@@ -22,11 +21,9 @@ class GamePage extends StatelessWidget {
           uri: Uri.parse(url),
         ),
         chatRepository: ChatRepository(
-          uri: Uri.parse(chatUrl),
+          uri: Uri.parse(url),
         ),
-      )
-        ..connect()
-        ..chatConnect(),
+      )..connect(),
       child: _GamePage(),
     );
   }

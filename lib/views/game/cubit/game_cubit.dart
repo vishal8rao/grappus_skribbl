@@ -1,14 +1,13 @@
 import 'dart:async';
-import 'dart:developer';
 
-import 'package:api/chat/chat_model.dart';
 import 'package:api/chat/chat_state.dart';
 import 'package:api/session/bloc/session_bloc.dart';
 import 'package:bloc/bloc.dart';
 import 'package:chat_repository/chat_repository.dart';
 import 'package:equatable/equatable.dart';
 import 'package:game_repository/game_repository.dart';
-import 'package:player_repository/models/drawing_points.dart';
+import 'package:models/chat_model.dart';
+import 'package:models/drawing_points.dart';
 
 part 'game_state.dart';
 
@@ -22,17 +21,13 @@ class GameCubit extends Cubit<GameState> {
 
   final GameRepository _gameRepository;
   final ChatRepository _chatRepository;
-  StreamSubscription<ChatState>? _chatStateSub;
-  StreamSubscription<SessionState>? _sessionStateSub;
+  StreamSubscription<ChatState?>? _chatStateSub;
+  StreamSubscription<SessionState?>? _sessionStateSub;
 
   Future<void> connect() async {
     _sessionStateSub = _gameRepository.session.listen((sessionState) {
       emit(state.copyWith(sessionState: sessionState));
     });
-  }
-
-  Future<void> chatConnect() async {
-    log('Chat is live!');
     _chatStateSub = _chatRepository.session.listen((chatState) {
       emit(state.copyWith(chatState: chatState));
     });
