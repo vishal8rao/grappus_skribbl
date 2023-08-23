@@ -20,11 +20,15 @@ class GameRepository {
     return _ws.messages.cast<String>().map(
       (event) {
         final map = jsonDecode(event) as Map<String, dynamic>;
+        print("sdfsd"+ map.toString());
         if (map['eventType'] == null) {
           return null;
         }
         final response = WebSocketResponse.fromMap(map);
         if (response.eventType == EventType.drawing) {
+          return SessionState.fromJson(response.data);
+        }
+        if (response.eventType == EventType.addPlayer) {
           return SessionState.fromJson(response.data);
         }
         return null;
@@ -35,6 +39,10 @@ class GameRepository {
   /// function to send the points to the server
   void sendPoints(DrawingPointsWrapper points) =>
       _ws.send(AddDrawingPointsEvent(data: points).encodedJson);
+
+  /// function to add player to the server
+  void addPlayer(String name) =>
+      _ws.send(AddPlayerEvent(data: name).encodedJson);
 
   /// function to get the connection
   Stream<ConnectionState> get connection => _ws.connection;

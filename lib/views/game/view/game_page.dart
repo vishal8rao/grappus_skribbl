@@ -9,9 +9,10 @@ import 'package:grappus_skribbl/views/views.dart';
 import 'package:models/drawing_points.dart';
 
 class GamePage extends StatelessWidget {
-  const GamePage({required this.url, super.key});
+  const GamePage({required this.url, required this.name, super.key});
 
   final String url;
+  final String name;
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +24,9 @@ class GamePage extends StatelessWidget {
         chatRepository: ChatRepository(
           uri: Uri.parse(url),
         ),
-      )..connect(),
+      )
+        ..connect()
+        ..addPlayer(name),
       child: _GamePage(),
     );
   }

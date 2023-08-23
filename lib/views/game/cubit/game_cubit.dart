@@ -28,18 +28,23 @@ class GameCubit extends Cubit<GameState> {
     _sessionStateSub = _gameRepository.session.listen((sessionState) {
       emit(state.copyWith(sessionState: sessionState));
     });
-    _chatStateSub = _chatRepository.session.listen((chatState) {
-      emit(state.copyWith(chatState: chatState));
-    });
+    // _chatStateSub = _chatRepository.session.listen((chatState) {
+    //   emit(state.copyWith(chatState: chatState));
+    // });
   }
 
-  Future<void> addPoints(DrawingPointsWrapper points) async {
-    _gameRepository.sendPoints(points);
+  Future<void> addPlayer(String name) async {
+    try {
+      _gameRepository.addPlayer(name);
+    } catch (e) {
+      addError(e, StackTrace.current);
+    }
   }
 
-  Future<void> addChats(ChatModel chat) async {
-    _chatRepository.sendChat(chat);
-  }
+  Future<void> addPoints(DrawingPointsWrapper points) async =>
+      _gameRepository.sendPoints(points);
+
+  Future<void> addChats(ChatModel chat) async => _chatRepository.sendChat(chat);
 
   @override
   Future<void> close() async {

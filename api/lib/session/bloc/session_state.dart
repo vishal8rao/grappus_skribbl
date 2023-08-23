@@ -5,6 +5,7 @@ class SessionState extends Equatable {
     this.currentPlayerId = '',
     this.players = const [],
     this.points = const DrawingPointsWrapper(points: null, paint: null),
+    this.eventType = EventType.invalid,
   });
 
   factory SessionState.fromJson(Map<String, dynamic> json) => SessionState(
@@ -16,32 +17,43 @@ class SessionState extends Equatable {
         points: DrawingPointsWrapper.fromJson(
           json['points'] as Map<String, dynamic>,
         ),
+        eventType: json['evenType'] as EventType,
       );
 
   final String currentPlayerId;
   final List<Player> players;
   final DrawingPointsWrapper points;
+  final EventType eventType;
 
   SessionState copyWith({
     String? currentPlayerId,
     List<Player>? players,
     DrawingPointsWrapper? points,
+    EventType? eventType,
   }) {
     return SessionState(
       currentPlayerId: currentPlayerId ?? this.currentPlayerId,
       players: players ?? this.players,
       points: points ?? this.points,
+      eventType: eventType ?? this.eventType,
     );
   }
 
   @override
-  List<Object?> get props => [points, currentPlayerId, players];
+  List<Object?> get props => [
+        points,
+        currentPlayerId,
+        players,
+        eventType,
+      ];
 
   Map<String, dynamic> toJson() => {
         'players': List<dynamic>.from(players.map((x) => x)),
         'currentPlayerId': currentPlayerId,
         'points': points.toJson(),
+        'eventType': eventType.toJson(),
       };
+
   @override
   String toString() {
     return encodedJson();

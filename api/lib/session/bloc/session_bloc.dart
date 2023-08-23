@@ -25,6 +25,7 @@ class SessionBloc extends BroadcastBloc<SessionEvent, SessionState> {
         players: players,
         currentPlayerId: event.player.userId,
         points: state.points,
+        eventType: EventType.addPlayer,
       ),
     );
   }
@@ -33,13 +34,13 @@ class SessionBloc extends BroadcastBloc<SessionEvent, SessionState> {
   Object toMessage(SessionState state) {
     return WebSocketResponse(
       data: state.toJson(),
-      eventType: EventType.drawing,
+      eventType: state.eventType,
     ).encodedJson();
   }
 
   void _onAddPoints(OnPointsAdded event, Emitter<SessionState> emit) {
     emit(
-      state.copyWith(points: event.points),
+      state.copyWith(points: event.points,eventType: EventType.drawing),
     );
   }
 

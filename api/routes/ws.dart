@@ -1,4 +1,5 @@
 import 'dart:convert';
+
 import 'package:api/chat/chat_bloc.dart';
 import 'package:api/session/bloc/session_bloc.dart';
 import 'package:api/utils/websocket_event_handler.dart';
@@ -7,18 +8,12 @@ import 'package:dart_frog_web_socket/dart_frog_web_socket.dart';
 import 'package:models/player.dart';
 import 'package:models/web_socket_event.dart';
 import 'package:models/web_socket_response.dart';
-
 import 'package:uuid/uuid.dart';
 
 /// Websocket Handler
 Future<Response> onRequest(RequestContext context) async {
   final handler = webSocketHandler((channel, protocol) {
-    final uid = const Uuid().v4();
-    final player = Player(
-      userId: uid,
-      name: 'name',
-    );
-    final sessionBloc = context.read<SessionBloc>()..add(OnPlayerAdded(player));
+    final sessionBloc = context.read<SessionBloc>();
     final chatCubit = context.read<ChatCubit>();
 
     channel.sink.add(
@@ -27,7 +22,6 @@ Future<Response> onRequest(RequestContext context) async {
         eventType: EventType.chat,
       ).encodedJson(),
     );
-
     sessionBloc.subscribe(channel);
     chatCubit.subscribe(channel);
 
@@ -64,16 +58,24 @@ Future<Response> onRequest(RequestContext context) async {
             case AddToChatEvent:
               final chatModel = (websocketEvent as AddToChatEvent).data;
               chatCubit.addToChat(chatModel);
+
+            case AddPlayerEvent:
+              final name =
+                  (websocketEvent as AddPlayerEvent).data;
+              final uid = const Uuid().v4();
+              final player = Player(userId: uid, name: name);
+              sessionBloc.add(OnPlayerAdded(player));
           }
         } catch (e) {
-          rethrow;
           channel.sink.add(
             jsonEncode({'status': 'error', 'message': e.toString()}),
           );
+          rethrow;
         }
       },
       onDone: () {
         final currentUserId = sessionBloc.state.currentPlayerId;
+        chatCubit.unsubscribe(channel);
         sessionBloc
           ..add(OnPlayerDisconnect(currentUserId))
           ..unsubscribe(channel);
