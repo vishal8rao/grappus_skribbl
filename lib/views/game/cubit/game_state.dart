@@ -1,13 +1,21 @@
 part of 'game_cubit.dart';
 
+enum GameStatus { connected, disconnected }
+
 class GameState extends Equatable {
-  const GameState({this.sessionState});
+  const GameState({
+    this.room,
+  });
 
-  final SessionState? sessionState;
+  final Room? room;
 
-  GameState copyWith({SessionState? sessionState}) =>
-      GameState(sessionState: sessionState ?? this.sessionState);
+  GameState copyWith({
+    Room? room,
+  }) =>
+      GameState(
+        room: room ?? this.room,
+      );
 
   @override
-  List<Object?> get props => [sessionState];
+  List<Object?> get props => [room];
 }
