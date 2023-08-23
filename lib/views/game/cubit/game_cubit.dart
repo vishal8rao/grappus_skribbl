@@ -6,7 +6,6 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:game_repository/game_repository.dart';
 import 'package:player_repository/models/drawing_points.dart';
-import 'package:player_repository/models/room.dart';
 
 part 'game_state.dart';
 

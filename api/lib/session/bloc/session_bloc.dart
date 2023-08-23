@@ -2,9 +2,7 @@ import 'dart:convert';
 
 import 'package:broadcast_bloc/broadcast_bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:player_repository/models/room.dart';
 import 'package:player_repository/player_repository.dart';
-import 'package:uuid/uuid.dart';
 
 part 'session_event.dart';
 
