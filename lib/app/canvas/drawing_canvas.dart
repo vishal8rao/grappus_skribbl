@@ -8,72 +8,43 @@ import 'package:player_repository/player_repository.dart';
 class DrawingCanvas extends StatelessWidget {
   DrawingCanvas({super.key});
 
-  // list of DrawingPoints to store points on client side
-  final pointsList = <DrawingPoints>[];
+  late List<DrawingPoints> pointsList = <DrawingPoints>[];
+  late String currentPlayerId = '';
+  late List<Player> players = <Player>[];
+  late String drawingPlayerId = '';
 
   @override
   Widget build(BuildContext context) {
-    final players =
-        context.select((GameCubit cubit) => cubit.state.sessionState?.players);
+    final cubit = context.read<GameCubit>();
+    final roomState = context.select((GameCubit cubit) => cubit.state.room);
 
-    // to update the PointList whenever new point comes from server
-    final newDrawingPoint = context.select((GameCubit cubit) {
-      final sessionState = cubit.state.sessionState;
-      if (sessionState != null) {
-        final data = sessionState.points;
-        final points = data.points != null
-            ? Offset(data.points!.dx, data.points!.dy)
-            : null;
-        final paint = data.paint != null
-            ? (Paint()
-              ..isAntiAlias = data.paint!.isAntiAlias
-              ..strokeWidth = data.paint!.strokeWidth)
-            : null;
-        return DrawingPoints(points: points, paint: paint);
+    if (roomState != null) {
+      players = roomState.players;
+      drawingPlayerId = roomState.currentPlayerDrawingId;
+
+      if (currentPlayerId.isEmpty) {
+        currentPlayerId = roomState.currentPlayerId;
       }
-      return DrawingPoints(points: null, paint: null);
-    });
 
-    pointsList.add(newDrawingPoint);
+      final newDrawingPoint = roomState.points.toDrawingPoints();
+      pointsList.add(newDrawingPoint);
+    }
 
     return Scaffold(
       body: GestureDetector(
-        onPanUpdate: (details) {
-          final renderBox = context.findRenderObject() as RenderBox?;
-          final globalToLocal =
-              renderBox?.globalToLocal(details.globalPosition);
-          context.read<GameCubit>().addPoints(
-                DrawingPointsWrapper(
-                  points: OffsetWrapper(
-                    dx: globalToLocal!.dx,
-                    dy: globalToLocal.dy,
-                  ),
-                  paint: const PaintWrapper(isAntiAlias: true, strokeWidth: 2),
-                ),
-              );
-        },
-        onPanStart: (details) {
-          final renderBox = context.findRenderObject() as RenderBox?;
-          final globalToLocal =
-              renderBox?.globalToLocal(details.globalPosition);
-          context.read<GameCubit>().addPoints(
-                DrawingPointsWrapper(
-                  points: OffsetWrapper(
-                    dx: globalToLocal!.dx,
-                    dy: globalToLocal.dy,
-                  ),
-                  paint: const PaintWrapper(isAntiAlias: true, strokeWidth: 2),
-                ),
-              );
-        },
-        onPanEnd: (details) {
-          context.read<GameCubit>().addPoints(
-                const DrawingPointsWrapper(
-                  points: null,
-                  paint: null,
-                ),
-              );
-        },
+        onPanUpdate: (details) => _handlePanUpdate(
+          context,
+          details,
+          cubit,
+        ),
+        onPanStart: (details) => _handlePanStart(
+          context,
+          details,
+          cubit,
+        ),
+        onPanEnd: (_) => _handlePanEnd(
+          cubit,
+        ),
         child: RepaintBoundary(
           child: Stack(
             children: [
@@ -84,15 +55,56 @@ class DrawingCanvas extends StatelessWidget {
               Flexible(
                 child: ListView.builder(
                   itemBuilder: (context, index) => Text(
-                    players![index].userId,
+                    players[index].userId,
                     style: const TextStyle(color: Colors.black87),
                   ),
-                  itemCount: players?.length,
+                  itemCount: players.length,
                 ),
               ),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  void _handlePanUpdate(
+    BuildContext context,
+    DragUpdateDetails details,
+    GameCubit cubit,
+  ) {
+    final renderBox = context.findRenderObject() as RenderBox?;
+    final globalToLocal = renderBox?.globalToLocal(details.globalPosition);
+    cubit.addPoints(
+      DrawingPointsWrapper(
+        points: OffsetWrapper(dx: globalToLocal!.dx, dy: globalToLocal.dy),
+        paint: const PaintWrapper(isAntiAlias: true, strokeWidth: 2),
+      ),
+    );
+  }
+
+  void _handlePanStart(
+    BuildContext context,
+    DragStartDetails details,
+    GameCubit cubit,
+  ) {
+    final renderBox = context.findRenderObject() as RenderBox?;
+    final globalToLocal = renderBox?.globalToLocal(details.globalPosition);
+    cubit.addPoints(
+      DrawingPointsWrapper(
+        points: OffsetWrapper(dx: globalToLocal!.dx, dy: globalToLocal.dy),
+        paint: const PaintWrapper(isAntiAlias: true, strokeWidth: 2),
+      ),
+    );
+  }
+
+  void _handlePanEnd(
+    GameCubit cubit,
+  ) {
+    cubit.addPoints(
+      const DrawingPointsWrapper(
+        points: null,
+        paint: null,
       ),
     );
   }
@@ -157,5 +169,18 @@ class DrawingPoints {
   @override
   String toString() {
     return '{paint: $paint, points: $points}';
+  }
+}
+
+extension _DrawingPointsWrapperExtension on DrawingPointsWrapper {
+  DrawingPoints toDrawingPoints() {
+    final points =
+        this.points != null ? Offset(this.points!.dx, this.points!.dy) : null;
+    final paint = this.paint != null
+        ? (Paint()
+          ..isAntiAlias = this.paint!.isAntiAlias
+          ..strokeWidth = this.paint!.strokeWidth)
+        : null;
+    return DrawingPoints(points: points, paint: paint);
   }
 }
