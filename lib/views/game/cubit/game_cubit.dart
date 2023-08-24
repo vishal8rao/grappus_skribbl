@@ -27,7 +27,10 @@ class GameCubit extends Cubit<GameState> {
 
   Future<void> addPlayer(String name) async {
     try {
-      _gameRepository.addPlayer(name);
+      final data = <String, dynamic>{}
+        ..putIfAbsent('name', () => name)
+        ..putIfAbsent('userId', () => state.sessionState?.currentPlayerId);
+      _gameRepository.updateName(data);
     } catch (e) {
       addError(e, StackTrace.current);
     }

@@ -8,6 +8,7 @@ enum EventType {
   drawing('__drawing__'),
   chat('__chat__'),
   addPlayer('__add_player__'),
+  updateName('__update_name__'),
   invalid('__invalid__');
 
   final String name;
@@ -62,8 +63,8 @@ class AddToChatEvent extends WebSocketEvent<ChatModel> {
   }
 }
 
-class AddPlayerEvent extends WebSocketEvent<String> {
-  AddPlayerEvent({
+class UpdateNameEvent extends WebSocketEvent<Map<String, dynamic>> {
+  UpdateNameEvent({
     required super.data,
     super.eventType = EventType.addPlayer,
   });
@@ -72,7 +73,7 @@ class AddPlayerEvent extends WebSocketEvent<String> {
   Map<String, dynamic> toJson() {
     return {
       'eventType': eventType.name,
-      'data': {'name': data},
+      'data': {'name': data['name'], 'userId': data['userId']},
     };
   }
 }

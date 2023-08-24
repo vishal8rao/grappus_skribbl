@@ -18,6 +18,7 @@ class SessionBloc extends BroadcastBloc<SessionEvent, SessionState> {
     on<OnPointsAdded>(_onAddPoints);
     on<OnPlayerDisconnect>(_onPlayerDisconnect);
     on<OnMessageSent>(_onMessageSent);
+    on<UpdateName>(_updateName);
   }
 
   void _onPlayerAdded(OnPlayerAdded event, Emitter<SessionState> emit) {
@@ -25,8 +26,23 @@ class SessionBloc extends BroadcastBloc<SessionEvent, SessionState> {
     emit(
       state.copyWith(
         players: players,
-        currentPlayerId: event.player.userId,
         points: state.points,
+        eventType: EventType.addPlayer,
+        currentPlayerId: event.player.userId,
+      ),
+    );
+  }
+
+  void _updateName(UpdateName event, Emitter<SessionState> emit) {
+    final player = state.players.firstWhere(
+      (element) => element.userId == event.userId,
+    )..copyWith(name: event.name);
+    final index =
+        state.players.indexWhere((element) => element.userId == event.userId);
+    state.players[index] = player;
+    emit(
+      state.copyWith(
+        players: state.players,
         eventType: EventType.addPlayer,
       ),
     );

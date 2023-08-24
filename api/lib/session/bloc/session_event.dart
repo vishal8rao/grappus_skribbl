@@ -39,3 +39,13 @@ class OnMessageSent extends SessionEvent {
   @override
   List<Object?> get props => [chat];
 }
+
+class UpdateName extends SessionEvent {
+  const UpdateName({required this.name, required this.userId});
+
+  final String name;
+  final String userId;
+
+  @override
+  List<Object?> get props => [name, userId];
+}
