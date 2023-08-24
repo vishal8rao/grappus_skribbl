@@ -1,36 +1,18 @@
 import 'dart:convert';
-import 'package:api/chat/chat_bloc.dart';
+
 import 'package:api/session/bloc/session_bloc.dart';
 import 'package:api/utils/websocket_event_handler.dart';
 import 'package:dart_frog/dart_frog.dart';
 import 'package:dart_frog_web_socket/dart_frog_web_socket.dart';
 import 'package:models/player.dart';
 import 'package:models/web_socket_event.dart';
-import 'package:models/web_socket_response.dart';
-
 import 'package:uuid/uuid.dart';
 
 /// Websocket Handler
 Future<Response> onRequest(RequestContext context) async {
   final handler = webSocketHandler((channel, protocol) {
-    final uid = const Uuid().v4();
-    final player = Player(
-      userId: uid,
-      name: 'name',
-    );
-    final sessionBloc = context.read<SessionBloc>()..add(OnPlayerAdded(player));
-    final chatCubit = context.read<ChatCubit>();
-
-    channel.sink.add(
-      WebSocketResponse(
-        data: chatCubit.state.toMap(),
-        eventType: EventType.chat,
-      ).encodedJson(),
-    );
-
-    sessionBloc.subscribe(channel);
-    chatCubit.subscribe(channel);
-
+    final sessionBloc = context.read<SessionBloc>()..subscribe(channel);
+    final player = Player(userId: '', name: '');
     channel.stream.listen(
       (data) {
         try {
@@ -63,19 +45,25 @@ Future<Response> onRequest(RequestContext context) async {
 
             case AddToChatEvent:
               final chatModel = (websocketEvent as AddToChatEvent).data;
-              chatCubit.addToChat(chatModel);
+              sessionBloc.add(OnMessageSent(chatModel));
+
+            case AddPlayerEvent:
+              player.name = (websocketEvent as AddPlayerEvent).data;
+              player.userId = const Uuid().v4();
+
+              sessionBloc
+                  .add(OnPlayerAdded(player));
           }
         } catch (e) {
-          rethrow;
           channel.sink.add(
             jsonEncode({'status': 'error', 'message': e.toString()}),
           );
+          rethrow;
         }
       },
       onDone: () {
-        final currentUserId = sessionBloc.state.currentPlayerId;
         sessionBloc
-          ..add(OnPlayerDisconnect(currentUserId))
+          ..add(OnPlayerDisconnect(player))
           ..unsubscribe(channel);
       },
     );

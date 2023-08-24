@@ -13,6 +13,7 @@ class ChatComponent extends StatefulWidget {
 
 class _ChatComponentState extends State<ChatComponent> {
   final message = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -26,11 +27,11 @@ class _ChatComponentState extends State<ChatComponent> {
               child: BlocBuilder<GameCubit, GameState>(
                 bloc: context.read<GameCubit>(),
                 builder: (context, state) {
-                  final chatState = state.chatState;
-                  if (chatState == null) {
+                  final sessionState = state.sessionState;
+                  if (sessionState == null) {
                     return const SizedBox();
                   }
-                  final messages = chatState.messages;
+                  final messages = sessionState.messages;
                   return ListView.builder(
                     itemCount: messages.length,
                     itemBuilder: (context, index) {
@@ -82,12 +83,8 @@ class _ChatComponentState extends State<ChatComponent> {
                     final players2 = gameState.sessionState!.players;
                     context.read<GameCubit>().addChats(
                           ChatModel(
-                            player: players2.firstWhere(
-                              (element) =>
-                                  element.userId ==
-                                  gameState.sessionState!.currentPlayerId,
-                              orElse: () => Player(name: 'err', userId: 'err'),
-                            ),
+                            player: players2[gameState.uid] ??
+                                Player(name: 'err', userId: 'err'),
                             message: message.text,
                           ),
                         );

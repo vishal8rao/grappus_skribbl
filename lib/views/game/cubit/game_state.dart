@@ -4,22 +4,22 @@ part of 'game_cubit.dart';
 class GameState extends Equatable {
   const GameState({
     this.sessionState,
-    this.chatState,
+    this.uid,
   });
 
   final SessionState? sessionState;
-  final ChatState? chatState;
+  final String? uid;
 
   GameState copyWith({
     SessionState? sessionState,
-    ChatState? chatState,
+    String? uid,
   }) {
     return GameState(
       sessionState: sessionState ?? this.sessionState,
-      chatState: chatState ?? this.chatState,
+      uid: uid ?? this.uid,
     );
   }
 
   @override
-  List<Object?> get props => [sessionState, chatState];
+  List<Object?> get props => [sessionState, uid];
 }

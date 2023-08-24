@@ -2,10 +2,10 @@ import 'dart:convert';
 
 import 'package:models/player.dart';
 
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 class ChatModel {
   final Player player;
   final String message;
+
   const ChatModel({
     required this.player,
     required this.message,
@@ -29,7 +29,4 @@ class ChatModel {
 
   factory ChatModel.fromJson(String source) =>
       ChatModel.fromMap(json.decode(source) as Map<String, dynamic>);
-
-  @override
-  List<Object> get props => [player, message];
 }

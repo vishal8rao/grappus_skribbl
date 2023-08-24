@@ -19,7 +19,11 @@ class WebSocketEventHandler {
       case EventType.chat:
         return AddToChatEvent(data: ChatModel.fromMap(data));
 
+      case EventType.addPlayer:
+        return AddPlayerEvent(data: data['name'].toString());
+
       case EventType.invalid:
+      case EventType.connect:
     }
 
     throw Exception('Invalid Event : $jsonData');

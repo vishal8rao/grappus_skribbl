@@ -1,6 +1,6 @@
 import 'dart:ui';
 
-import 'package:chat_repository/chat_repository.dart';
+import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:game_repository/game_repository.dart';
@@ -9,9 +9,10 @@ import 'package:grappus_skribbl/views/views.dart';
 import 'package:models/drawing_points.dart';
 
 class GamePage extends StatelessWidget {
-  const GamePage({required this.url, super.key});
+  const GamePage({required this.url, required this.name, super.key});
 
   final String url;
+  final String name;
 
   @override
   Widget build(BuildContext context) {
@@ -20,10 +21,7 @@ class GamePage extends StatelessWidget {
         gameRepository: GameRepository(
           uri: Uri.parse(url),
         ),
-        chatRepository: ChatRepository(
-          uri: Uri.parse(url),
-        ),
-      )..connect(),
+      )..connect(name),
       child: _GamePage(),
     );
   }
@@ -63,77 +61,85 @@ class _GamePage extends StatelessWidget {
     return Scaffold(
       body: SafeArea(
         child: players != null && players.isNotEmpty
-            ? Row(
-                children: [
-                  Expanded(
-                    child: GestureDetector(
-                      onPanUpdate: (details) {
-                        final renderBox =
-                            context.findRenderObject() as RenderBox?;
-                        final globalToLocal =
-                            renderBox?.globalToLocal(details.globalPosition);
-                        context.read<GameCubit>().addPoints(
-                              DrawingPointsWrapper(
-                                points: OffsetWrapper(
-                                  dx: globalToLocal!.dx,
-                                  dy: globalToLocal.dy,
+            ? Padding(
+                padding: const EdgeInsets.all(20),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: GestureDetector(
+                        onPanUpdate: (details) {
+                          final renderBox =
+                              context.findRenderObject() as RenderBox?;
+                          final globalToLocal =
+                              renderBox?.globalToLocal(details.globalPosition);
+                          context.read<GameCubit>().addPoints(
+                                DrawingPointsWrapper(
+                                  points: OffsetWrapper(
+                                    dx: globalToLocal!.dx,
+                                    dy: globalToLocal.dy,
+                                  ),
+                                  paint: const PaintWrapper(
+                                    isAntiAlias: true,
+                                    strokeWidth: 2,
+                                  ),
                                 ),
-                                paint: const PaintWrapper(
-                                  isAntiAlias: true,
-                                  strokeWidth: 2,
+                              );
+                        },
+                        onPanStart: (details) {
+                          final renderBox =
+                              context.findRenderObject() as RenderBox?;
+                          final globalToLocal =
+                              renderBox?.globalToLocal(details.globalPosition);
+                          context.read<GameCubit>().addPoints(
+                                DrawingPointsWrapper(
+                                  points: OffsetWrapper(
+                                    dx: globalToLocal!.dx,
+                                    dy: globalToLocal.dy,
+                                  ),
+                                  paint: const PaintWrapper(
+                                    isAntiAlias: true,
+                                    strokeWidth: 2,
+                                  ),
+                                ),
+                              );
+                        },
+                        onPanEnd: (details) {
+                          context.read<GameCubit>().addPoints(
+                                const DrawingPointsWrapper(
+                                  points: null,
+                                  paint: null,
+                                ),
+                              );
+                        },
+                        child: RepaintBoundary(
+                          child: Stack(
+                            children: [
+                              CustomPaint(
+                                size: Size.infinite,
+                                painter: DrawingPainter(pointsList: pointsList),
+                              ),
+                              Container(
+                                height: 200,
+                                decoration: BoxDecoration(
+                                  color: AppColors.baseColor,
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: ListView.builder(
+                                  itemBuilder: (context, index) => Text(
+                                    players.values.toList()[index].name,
+                                    style: context.textTheme.titleMedium,
+                                  ),
+                                  itemCount: players.length,
                                 ),
                               ),
-                            );
-                      },
-                      onPanStart: (details) {
-                        final renderBox =
-                            context.findRenderObject() as RenderBox?;
-                        final globalToLocal =
-                            renderBox?.globalToLocal(details.globalPosition);
-                        context.read<GameCubit>().addPoints(
-                              DrawingPointsWrapper(
-                                points: OffsetWrapper(
-                                  dx: globalToLocal!.dx,
-                                  dy: globalToLocal.dy,
-                                ),
-                                paint: const PaintWrapper(
-                                  isAntiAlias: true,
-                                  strokeWidth: 2,
-                                ),
-                              ),
-                            );
-                      },
-                      onPanEnd: (details) {
-                        context.read<GameCubit>().addPoints(
-                              const DrawingPointsWrapper(
-                                points: null,
-                                paint: null,
-                              ),
-                            );
-                      },
-                      child: RepaintBoundary(
-                        child: Stack(
-                          children: [
-                            CustomPaint(
-                              size: Size.infinite,
-                              painter: DrawingPainter(pointsList: pointsList),
-                            ),
-                            Flexible(
-                              child: ListView.builder(
-                                itemBuilder: (context, index) => Text(
-                                  players[index].userId,
-                                  style: const TextStyle(color: Colors.black87),
-                                ),
-                                itemCount: players.length,
-                              ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  const ChatComponent()
-                ],
+                    const ChatComponent()
+                  ],
+                ),
               )
             : const Center(
                 child: SizedBox(

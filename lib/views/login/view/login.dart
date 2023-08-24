@@ -48,6 +48,7 @@ class LoginPage extends StatelessWidget {
                     MaterialPageRoute(
                       builder: (context) => GamePage(
                         url: _gameUrlController.text,
+                        name: _nameController.text,
                       ),
                     ),
                   ),
