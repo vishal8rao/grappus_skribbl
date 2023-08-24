@@ -20,6 +20,9 @@ class GameCubit extends Cubit<GameState> {
 
   Future<void> connect(String name) async {
     _sessionStateSub = _gameRepository.session.listen((sessionState) {
+      if(state.uid == null){
+        emit(state.copyWith(uid: sessionState?.currentPlayerId));
+      }
       emit(state.copyWith(sessionState: sessionState));
     });
     await Future.delayed(const Duration(seconds: 1), () => addPlayer(name));
@@ -27,10 +30,7 @@ class GameCubit extends Cubit<GameState> {
 
   Future<void> addPlayer(String name) async {
     try {
-      final data = <String, dynamic>{}
-        ..putIfAbsent('name', () => name)
-        ..putIfAbsent('userId', () => state.sessionState?.currentPlayerId);
-      _gameRepository.updateName(data);
+      _gameRepository.addPlayer(name);
     } catch (e) {
       addError(e, StackTrace.current);
     }

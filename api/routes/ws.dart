@@ -11,12 +11,8 @@ import 'package:uuid/uuid.dart';
 /// Websocket Handler
 Future<Response> onRequest(RequestContext context) async {
   final handler = webSocketHandler((channel, protocol) {
-    final uid = const Uuid().v4();
-    final player = Player(userId: uid, name: '');
-    final sessionBloc = context.read<SessionBloc>()
-      ..add(OnPlayerAdded(player))
-      ..subscribe(channel);
-
+    final sessionBloc = context.read<SessionBloc>()..subscribe(channel);
+    final player = Player(userId: '', name: '');
     channel.stream.listen(
       (data) {
         try {
@@ -51,14 +47,12 @@ Future<Response> onRequest(RequestContext context) async {
               final chatModel = (websocketEvent as AddToChatEvent).data;
               sessionBloc.add(OnMessageSent(chatModel));
 
-            case UpdateNameEvent:
-              final data = (websocketEvent as UpdateNameEvent).data;
-              sessionBloc.add(
-                UpdateName(
-                  userId: data['userId'].toString(),
-                  name: data['name'].toString(),
-                ),
-              );
+            case AddPlayerEvent:
+              player.name = (websocketEvent as AddPlayerEvent).data;
+              player.userId = const Uuid().v4();
+
+              sessionBloc
+                  .add(OnPlayerAdded(player));
           }
         } catch (e) {
           channel.sink.add(
@@ -68,9 +62,8 @@ Future<Response> onRequest(RequestContext context) async {
         }
       },
       onDone: () {
-        final currentUserId = sessionBloc.state.currentPlayerId;
         sessionBloc
-          ..add(OnPlayerDisconnect(currentUserId))
+          ..add(OnPlayerDisconnect(player))
           ..unsubscribe(channel);
       },
     );

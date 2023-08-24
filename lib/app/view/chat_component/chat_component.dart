@@ -13,6 +13,7 @@ class ChatComponent extends StatefulWidget {
 
 class _ChatComponentState extends State<ChatComponent> {
   final message = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -82,12 +83,8 @@ class _ChatComponentState extends State<ChatComponent> {
                     final players2 = gameState.sessionState!.players;
                     context.read<GameCubit>().addChats(
                           ChatModel(
-                            player: players2.firstWhere(
-                              (element) =>
-                                  element.userId ==
-                                  gameState.sessionState!.currentPlayerId,
-                              orElse: () => Player(name: 'err', userId: 'err'),
-                            ),
+                            player: players2[gameState.uid] ??
+                                Player(name: 'err', userId: 'err'),
                             message: message.text,
                           ),
                         );

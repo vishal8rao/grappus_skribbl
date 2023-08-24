@@ -2,8 +2,8 @@
 import 'dart:convert';
 
 class Player {
-  final String userId;
-  final String name;
+   String userId;
+   String name;
 
   Player({
     required this.userId,

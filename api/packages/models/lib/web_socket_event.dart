@@ -2,13 +2,12 @@ import 'dart:convert';
 
 import 'package:models/chat_model.dart';
 import 'package:models/drawing_points.dart';
-import 'package:models/player.dart';
 
 enum EventType {
+  connect('__connect__'),
   drawing('__drawing__'),
   chat('__chat__'),
   addPlayer('__add_player__'),
-  updateName('__update_name__'),
   invalid('__invalid__');
 
   final String name;
@@ -63,8 +62,8 @@ class AddToChatEvent extends WebSocketEvent<ChatModel> {
   }
 }
 
-class UpdateNameEvent extends WebSocketEvent<Map<String, dynamic>> {
-  UpdateNameEvent({
+class AddPlayerEvent extends WebSocketEvent<String> {
+  AddPlayerEvent({
     required super.data,
     super.eventType = EventType.addPlayer,
   });
@@ -73,7 +72,7 @@ class UpdateNameEvent extends WebSocketEvent<Map<String, dynamic>> {
   Map<String, dynamic> toJson() {
     return {
       'eventType': eventType.name,
-      'data': {'name': data['name'], 'userId': data['userId']},
+      'data': {'name': data},
     };
   }
 }

@@ -23,12 +23,12 @@ class OnPointsAdded extends SessionEvent {
 }
 
 class OnPlayerDisconnect extends SessionEvent {
-  const OnPlayerDisconnect(this.userId);
+  const OnPlayerDisconnect(this.player);
 
-  final String userId;
+  final Player player;
 
   @override
-  List<Object?> get props => [userId];
+  List<Object?> get props => [player];
 }
 
 class OnMessageSent extends SessionEvent {
@@ -38,14 +38,4 @@ class OnMessageSent extends SessionEvent {
 
   @override
   List<Object?> get props => [chat];
-}
-
-class UpdateName extends SessionEvent {
-  const UpdateName({required this.name, required this.userId});
-
-  final String name;
-  final String userId;
-
-  @override
-  List<Object?> get props => [name, userId];
 }

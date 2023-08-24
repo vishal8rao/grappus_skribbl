@@ -62,8 +62,8 @@ class _GamePage extends StatelessWidget {
       body: SafeArea(
         child: players != null && players.isNotEmpty
             ? Padding(
-              padding: const EdgeInsets.all(20),
-              child: Row(
+                padding: const EdgeInsets.all(20),
+                child: Row(
                   children: [
                     Expanded(
                       child: GestureDetector(
@@ -126,7 +126,7 @@ class _GamePage extends StatelessWidget {
                                 ),
                                 child: ListView.builder(
                                   itemBuilder: (context, index) => Text(
-                                    players[index].name,
+                                    players.values.toList()[index].name,
                                     style: context.textTheme.titleMedium,
                                   ),
                                   itemCount: players.length,
@@ -140,7 +140,7 @@ class _GamePage extends StatelessWidget {
                     const ChatComponent()
                   ],
                 ),
-            )
+              )
             : const Center(
                 child: SizedBox(
                   width: 30,

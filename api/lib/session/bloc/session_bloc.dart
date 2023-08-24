@@ -18,42 +18,26 @@ class SessionBloc extends BroadcastBloc<SessionEvent, SessionState> {
     on<OnPointsAdded>(_onAddPoints);
     on<OnPlayerDisconnect>(_onPlayerDisconnect);
     on<OnMessageSent>(_onMessageSent);
-    on<UpdateName>(_updateName);
   }
 
   void _onPlayerAdded(OnPlayerAdded event, Emitter<SessionState> emit) {
-    final players = <Player>[...state.players, event.player];
+    emit(
+      state.copyWith(
+        currentPlayerId: event.player.userId,
+        eventType: EventType.connect,
+      ),
+    );
+    final players = <String, Player>{}
+      ..addAll(state.players)
+      ..putIfAbsent(event.player.userId, () => event.player);
     emit(
       state.copyWith(
         players: players,
+        eventType: EventType.addPlayer,
         points: state.points,
-        eventType: EventType.addPlayer,
-        currentPlayerId: event.player.userId,
+        currentPlayerId: null,
       ),
     );
-  }
-
-  void _updateName(UpdateName event, Emitter<SessionState> emit) {
-    final player = state.players.firstWhere(
-      (element) => element.userId == event.userId,
-    )..copyWith(name: event.name);
-    final index =
-        state.players.indexWhere((element) => element.userId == event.userId);
-    state.players[index] = player;
-    emit(
-      state.copyWith(
-        players: state.players,
-        eventType: EventType.addPlayer,
-      ),
-    );
-  }
-
-  @override
-  Object toMessage(SessionState state) {
-    return WebSocketResponse(
-      data: state.toJson(),
-      eventType: state.eventType,
-    ).encodedJson();
   }
 
   void _onAddPoints(OnPointsAdded event, Emitter<SessionState> emit) {
@@ -75,12 +59,17 @@ class SessionBloc extends BroadcastBloc<SessionEvent, SessionState> {
     OnPlayerDisconnect event,
     Emitter<SessionState> emit,
   ) {
-    final players = [
-      ...state.players,
-    ]..removeWhere((player) => player.userId == event.userId);
+    final players = state.players
+      ..removeWhere((key, value) => value == event.player);
 
-    emit(
-      state.copyWith(players: players),
-    );
+    emit(state.copyWith(players: players));
+  }
+
+  @override
+  Object toMessage(SessionState state) {
+    return WebSocketResponse(
+      data: state.toJson(),
+      eventType: state.eventType,
+    ).encodedJson();
   }
 }

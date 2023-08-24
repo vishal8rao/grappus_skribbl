@@ -38,8 +38,8 @@ class GameRepository {
       _ws.send(AddDrawingPointsEvent(data: points).encodedJson);
 
   /// function to add player to the server
-  void updateName(Map<String, dynamic> data) =>
-      _ws.send(UpdateNameEvent(data: data).encodedJson);
+  void addPlayer(String name) =>
+      _ws.send(AddPlayerEvent(data: name).encodedJson);
 
   /// function to send the chats to the server
   void sendChat(ChatModel chat) {
