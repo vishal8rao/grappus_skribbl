@@ -51,8 +51,7 @@ Future<Response> onRequest(RequestContext context) async {
               player.name = (websocketEvent as AddPlayerEvent).data;
               player.userId = const Uuid().v4();
 
-              sessionBloc
-                  .add(OnPlayerAdded(player));
+              sessionBloc.add(OnPlayerAdded(player));
           }
         } catch (e) {
           channel.sink.add(

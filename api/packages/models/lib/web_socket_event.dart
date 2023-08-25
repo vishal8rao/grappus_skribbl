@@ -10,16 +10,14 @@ enum EventType {
   addPlayer('__add_player__'),
   invalid('__invalid__');
 
-  final String name;
-
   const EventType(this.name);
-
-  Map<String, dynamic> toJson() {
-    return {'eventType': this.name};
-  }
 
   factory EventType.fromJson(Map<String, dynamic> json) => EventType.values
       .firstWhere((element) => element.name == json['eventType']);
+  final String name;
+  Map<String, dynamic> toJson() {
+    return {'eventType': name};
+  }
 }
 
 abstract class WebSocketEvent<T> {
@@ -28,8 +26,8 @@ abstract class WebSocketEvent<T> {
     required this.data,
   });
 
-  final EventType eventType;
   final T data;
+  final EventType eventType;
 
   Map<String, dynamic> toJson() {
     throw UnimplementedError();

@@ -137,7 +137,24 @@ class _GamePage extends StatelessWidget {
                         ),
                       ),
                     ),
-                    const ChatComponent()
+                    Column(
+                      children: [
+                        BlocBuilder<GameCubit, GameState>(
+                          bloc: context.read<GameCubit>(),
+                          builder: (context, state) {
+                            final sessionState = state.sessionState;
+                            if (sessionState == null) {
+                              return const SizedBox();
+                            }
+                            return Text(
+                              'Correct '
+                              'Answer:${state.sessionState!.correctAnswer}',
+                            );
+                          },
+                        ),
+                        const ChatComponent(),
+                      ],
+                    ),
                   ],
                 ),
               )

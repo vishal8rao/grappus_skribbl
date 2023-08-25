@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:api/utils/random_words.dart';
 import 'package:broadcast_bloc/broadcast_bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:models/chat_model.dart';
@@ -21,10 +22,15 @@ class SessionBloc extends BroadcastBloc<SessionEvent, SessionState> {
   }
 
   void _onPlayerAdded(OnPlayerAdded event, Emitter<SessionState> emit) {
+    // Round has started when the first player joins the game
+    if (state.players.isEmpty) {
+      emit(state.copyWith(correctAnswer: getRandomWord));
+    }
     emit(
       state.copyWith(
         currentPlayerId: event.player.userId,
         eventType: EventType.connect,
+        correctAnswer: getRandomWord,
       ),
     );
     final players = <String, Player>{}
@@ -35,7 +41,6 @@ class SessionBloc extends BroadcastBloc<SessionEvent, SessionState> {
         players: players,
         eventType: EventType.addPlayer,
         points: state.points,
-        currentPlayerId: null,
       ),
     );
   }
@@ -47,6 +52,25 @@ class SessionBloc extends BroadcastBloc<SessionEvent, SessionState> {
   }
 
   void _onMessageSent(OnMessageSent event, Emitter<SessionState> emit) {
+    final isCorrectAnswer = event.chat.message == state.correctAnswer;
+    if (isCorrectAnswer) {
+      final players = state.players;
+      players[event.chat.player.userId] = players[event.chat.player.userId]!
+          .copyWith(hasAnsweredCorrectly: true);
+      emit(
+        state.copyWith(
+          messages: [
+            ...state.messages,
+            event.chat.copyWith(
+              player: event.chat.player.copyWith(hasAnsweredCorrectly: true),
+            ),
+          ],
+          players: players,
+          eventType: EventType.chat,
+        ),
+      );
+      return;
+    }
     emit(
       state.copyWith(
         messages: [...state.messages, event.chat],
@@ -59,8 +83,8 @@ class SessionBloc extends BroadcastBloc<SessionEvent, SessionState> {
     OnPlayerDisconnect event,
     Emitter<SessionState> emit,
   ) {
-    final players = state.players
-      ..removeWhere((key, value) => value == event.player);
+    final map = state.players;
+    final players = map..removeWhere((key, value) => value == event.player);
 
     emit(state.copyWith(players: players));
   }

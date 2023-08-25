@@ -35,22 +35,51 @@ class _ChatComponentState extends State<ChatComponent> {
                   return ListView.builder(
                     itemCount: messages.length,
                     itemBuilder: (context, index) {
-                      return Container(
-                        padding: const EdgeInsets.only(bottom: 14),
-                        child: Row(
-                          children: [
-                            const CircleAvatar(),
-                            const SizedBox(width: 5),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(messages[index].player.name),
-                                Text(messages[index].message)
-                              ],
-                            ),
-                          ],
-                        ),
-                      );
+                      // If its a correct answer
+                      // or the answer has been already given
+                      final isMessageCorrectAnswer = messages[index].message ==
+                              sessionState.correctAnswer ||
+                          messages[index].player.hasAnsweredCorrectly;
+                      final currentPlayer =
+                          state.sessionState!.players[state.uid];
+                      //  If this current player has not answered correct
+                      // and the message is correct
+                      // then dont show the chat
+                      return isMessageCorrectAnswer &&
+                              (!currentPlayer!.hasAnsweredCorrectly)
+                          ? const SizedBox()
+                          : Container(
+                              padding: const EdgeInsets.only(bottom: 14),
+                              child: Row(
+                                children: [
+                                  CircleAvatar(
+                                    backgroundColor: isMessageCorrectAnswer
+                                        ? Colors.green
+                                        : Colors.black,
+                                  ),
+                                  const SizedBox(width: 5),
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(messages[index].player.name),
+                                      Text(
+                                        messages[index].message,
+                                        style: TextStyle(
+                                          color: messages[index]
+                                                  .player
+                                                  .hasAnsweredCorrectly
+                                              ? Colors.orange
+                                              : isMessageCorrectAnswer
+                                                  ? Colors.green.shade900
+                                                  : Colors.black,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            );
                     },
                   );
                 },
@@ -91,7 +120,7 @@ class _ChatComponentState extends State<ChatComponent> {
                     message.clear();
                   },
                   icon: const Icon(Icons.send),
-                )
+                ),
               ],
             ),
           ),

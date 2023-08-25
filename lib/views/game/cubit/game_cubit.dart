@@ -20,7 +20,7 @@ class GameCubit extends Cubit<GameState> {
 
   Future<void> connect(String name) async {
     _sessionStateSub = _gameRepository.session.listen((sessionState) {
-      if(state.uid == null){
+      if (state.uid == null) {
         emit(state.copyWith(uid: sessionState?.currentPlayerId));
       }
       emit(state.copyWith(sessionState: sessionState));
