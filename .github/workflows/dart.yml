@@ -1,4 +1,4 @@
-xname: Web App
+name: Web App
 on:
   push:
     branches: [ develop ]
