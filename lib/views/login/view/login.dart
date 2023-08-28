@@ -58,7 +58,7 @@ class LoginPage extends StatelessWidget {
                       color: AppColors.flashWhite,
                     ),
                   ),
-                )
+                ),
               ],
             ),
           ),

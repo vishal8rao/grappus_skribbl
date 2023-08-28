@@ -1,22 +1,13 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
 import 'package:models/player.dart';
 
 class ChatModel {
-  final Player player;
-  final String message;
-
   const ChatModel({
     required this.player,
     required this.message,
   });
-
-  Map<String, dynamic> toMap() {
-    return <String, dynamic>{
-      'player': player.toMap(),
-      'message': message,
-    };
-  }
 
   factory ChatModel.fromMap(Map<String, dynamic> map) {
     return ChatModel(
@@ -25,8 +16,27 @@ class ChatModel {
     );
   }
 
-  String toJson() => json.encode(toMap());
-
   factory ChatModel.fromJson(String source) =>
       ChatModel.fromMap(json.decode(source) as Map<String, dynamic>);
+  final Player player;
+  final String message;
+
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{
+      'player': player.toMap(),
+      'message': message,
+    };
+  }
+
+  String toJson() => json.encode(toMap());
+
+  ChatModel copyWith({
+    Player? player,
+    String? message,
+  }) {
+    return ChatModel(
+      player: player ?? this.player,
+      message: message ?? this.message,
+    );
+  }
 }
