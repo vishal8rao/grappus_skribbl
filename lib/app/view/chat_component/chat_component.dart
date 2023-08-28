@@ -40,11 +40,13 @@ class _ChatComponentState extends State<ChatComponent> {
                       final isMessageCorrectAnswer = messages[index].message ==
                               sessionState.correctAnswer ||
                           messages[index].player.hasAnsweredCorrectly;
+
                       final currentPlayer =
                           state.sessionState!.players[state.uid];
                       //  If this current player has not answered correct
                       // and the message is correct
                       // then dont show the chat
+
                       return isMessageCorrectAnswer &&
                               (!currentPlayer!.hasAnsweredCorrectly)
                           ? const SizedBox()

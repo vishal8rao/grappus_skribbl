@@ -22,15 +22,14 @@ class SessionBloc extends BroadcastBloc<SessionEvent, SessionState> {
   }
 
   void _onPlayerAdded(OnPlayerAdded event, Emitter<SessionState> emit) {
-    // Round has started when the first player joins the game
-    if (state.players.isEmpty) {
+    // Round has started when the second player joins the game
+    if (state.players.length == 1 && state.correctAnswer.isEmpty) {
       emit(state.copyWith(correctAnswer: getRandomWord));
     }
     emit(
       state.copyWith(
         currentPlayerId: event.player.userId,
         eventType: EventType.connect,
-        correctAnswer: getRandomWord,
       ),
     );
     final players = <String, Player>{}
@@ -52,7 +51,7 @@ class SessionBloc extends BroadcastBloc<SessionEvent, SessionState> {
   }
 
   void _onMessageSent(OnMessageSent event, Emitter<SessionState> emit) {
-    final isCorrectAnswer = event.chat.message == state.correctAnswer;
+    final isCorrectAnswer = _checkIfMessageIsCorrectAnswer(event);
     if (isCorrectAnswer) {
       final players = state.players;
       players[event.chat.player.userId] = players[event.chat.player.userId]!
@@ -77,6 +76,11 @@ class SessionBloc extends BroadcastBloc<SessionEvent, SessionState> {
         eventType: EventType.chat,
       ),
     );
+  }
+
+  bool _checkIfMessageIsCorrectAnswer(OnMessageSent event) {
+    final message = event.chat.message.trim();
+    return message.toUpperCase() == state.correctAnswer.toUpperCase();
   }
 
   void _onPlayerDisconnect(
