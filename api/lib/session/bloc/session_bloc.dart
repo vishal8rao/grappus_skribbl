@@ -1,4 +1,4 @@
-import 'dart:async';
+  import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
 
@@ -42,6 +42,7 @@ class SessionBloc extends BroadcastBloc<SessionEvent, SessionState> {
     // Round has started when the second player joins the game
     if (state.players.length == 1 && state.correctAnswer.isEmpty) {
       emit(state.copyWith(correctAnswer: getRandomWord));
+      print('Correct answer: ${state.correctAnswer}');
       add(OnRoundStarted());
     }
     emit(
@@ -58,6 +59,8 @@ class SessionBloc extends BroadcastBloc<SessionEvent, SessionState> {
         players: players,
         eventType: EventType.addPlayer,
         points: state.points,
+        ///Making [currentPlayerId] null so that it does not override
+        currentPlayerId: null,
       ),
     );
   }
@@ -70,12 +73,17 @@ class SessionBloc extends BroadcastBloc<SessionEvent, SessionState> {
 
   void _onMessageSent(OnMessageSent event, Emitter<SessionState> emit) {
     final players = state.players;
-    players[event.chat.player.userId] =
-        players[event.chat.player.userId]!.copyWith();
+    var guesses = players[event.chat.player.userId]?.numOfGuesses ?? 0;
+
     final isCorrectAnswer = _checkIfMessageIsCorrectAnswer(event);
     if (isCorrectAnswer) {
-      players[event.chat.player.userId] = players[event.chat.player.userId]!
-          .copyWith(hasAnsweredCorrectly: true);
+      players[event.chat.player.userId] =
+          players[event.chat.player.userId]!.copyWith(
+        hasAnsweredCorrectly: true,
+        numOfGuesses: ++guesses,
+        guessedAt: state.remainingTime,
+      );
+      var correctGuesses = state.numOfCorrectGuesses;
       emit(
         state.copyWith(
           messages: [
@@ -86,14 +94,17 @@ class SessionBloc extends BroadcastBloc<SessionEvent, SessionState> {
           ],
           players: players,
           eventType: EventType.chat,
+          numOfCorrectGuesses: ++correctGuesses,
         ),
       );
       return;
     }
+    players[event.chat.player.userId]?.copyWith(numOfGuesses: ++guesses);
     emit(
       state.copyWith(
         messages: [...state.messages, event.chat],
         eventType: EventType.chat,
+        players: players,
       ),
     );
   }
@@ -105,14 +116,15 @@ class SessionBloc extends BroadcastBloc<SessionEvent, SessionState> {
 
   int _calculateScore(
     bool isDrawing,
-    int secondsPassed,
+    int guessedAt,
     int numOfGuesses,
     int numOfCorrectGuesses,
   ) {
     const maxPoints = 300;
+    const baseDrawingPoints = 100;
     const pointsDeductionPerGuess = 2;
     if (!isDrawing) {
-      return switch (secondsPassed) {
+      return switch (guessedAt) {
         >= 25 => maxPoints - (numOfGuesses * pointsDeductionPerGuess),
         >= 20 => maxPoints - (numOfGuesses * pointsDeductionPerGuess) - 50,
         >= 15 => maxPoints - (numOfGuesses * pointsDeductionPerGuess) - 100,
@@ -122,8 +134,9 @@ class SessionBloc extends BroadcastBloc<SessionEvent, SessionState> {
         _ => 0,
       };
     }
-    final bonusPointsPerGuess = maxPoints ~/ numOfCorrectGuesses;
-    return maxPoints + bonusPointsPerGuess * numOfCorrectGuesses;
+    final bonusPointsPerGuess =
+        numOfCorrectGuesses == 0 ? 0 : maxPoints ~/ numOfCorrectGuesses;
+    return baseDrawingPoints + bonusPointsPerGuess * numOfCorrectGuesses;
   }
 
   void _onPlayerDisconnect(
@@ -138,15 +151,18 @@ class SessionBloc extends BroadcastBloc<SessionEvent, SessionState> {
 
   void _onRoundStarted(OnRoundStarted event, Emitter<SessionState> emit) {
     _tickerSub?.cancel();
+    final players = state.players;
 
     var currentRound = state.round;
     final isDrawing = state.players.keys.toList()[Random().nextInt(
       state.players.keys.length - 1,
     )];
+    players[isDrawing]?.copyWith(isDrawing: true);
     emit(
       state.copyWith(
         round: ++currentRound,
         isDrawing: isDrawing,
+        players: players,
       ),
     );
     _tickerSub = _ticker.tick(ticks: 30).listen(
@@ -155,13 +171,33 @@ class SessionBloc extends BroadcastBloc<SessionEvent, SessionState> {
   }
 
   void _onTicked(_TimerTicked event, Emitter<SessionState> emit) {
+    if (event.duration == 0) {
+      add(const OnRoundEnded());
+      return;
+    }
     emit(state.copyWith(remainingTime: event.duration));
   }
 
-  void _onRoundEnded(OnRoundEnded event, Emitter<SessionState> emit) {
-    var currentRound = state.round;
-
-    emit(state.copyWith(round: ++currentRound));
+  Future<void> _onRoundEnded(
+    OnRoundEnded event,
+    Emitter<SessionState> emit,
+  ) async {
+    final players = state.players
+      ..forEach((key, value) {
+        value.copyWith(
+          score: _calculateScore(
+            key == state.isDrawing,
+            value.guessedAt,
+            value.numOfGuesses,
+            state.numOfCorrectGuesses,
+          ),
+        );
+      });
+    emit(state.copyWith(players: players));
+    await Future.delayed(
+      const Duration(seconds: 5),
+      () => add(const OnRoundStarted()),
+    );
   }
 
   @override

@@ -36,7 +36,8 @@ class _GamePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<GameCubit>();
-
+    final remainingTime =
+        context.watch<GameCubit>().state.sessionState?.remainingTime;
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(25).responsive(context),
@@ -55,7 +56,7 @@ class _GamePage extends StatelessWidget {
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
-                    '00',
+                    '${remainingTime ?? 0}',
                     style: context.textTheme.headlineLarge
                         ?.copyWith(color: AppColors.indigo),
                   ),
@@ -79,14 +80,14 @@ class _GamePage extends StatelessWidget {
                     ),
                   ),
                 ),
-                SizedBox(
-                  width: 12.toResponsiveWidth(context),
-                ),
-                Image.asset(
-                  Assets().getRandomImage(),
-                  width: 45.toResponsiveWidth(context),
-                  height: 45.toResponsiveWidth(context),
-                ),
+                // SizedBox(
+                //   width: 12.toResponsiveWidth(context),
+                // ),
+                // Image.asset(
+                //   Assets().getRandomImage(),
+                //   width: 45.toResponsiveWidth(context),
+                //   height: 45.toResponsiveWidth(context),
+                // ),
                 SizedBox(
                   width: 8.toResponsiveWidth(context),
                 ),

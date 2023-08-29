@@ -2,13 +2,14 @@
 import 'dart:convert';
 
 class Player {
-   String userId;
-   String name;
-   String imagePath;
+  String userId;
+  String name;
+  String imagePath;
   final bool hasAnsweredCorrectly;
   final int score;
   final bool isDrawing;
   final int numOfGuesses;
+  final int guessedAt;
 
   Player({
     required this.userId,
@@ -18,6 +19,7 @@ class Player {
     this.score = 0,
     this.isDrawing = false,
     this.numOfGuesses = 0,
+    this.guessedAt = -1,
   });
 
   Player copyWith({
@@ -28,6 +30,7 @@ class Player {
     int? score,
     bool? isDrawing,
     int? numOfGuesses,
+    int? guessedAt,
   }) {
     return Player(
       userId: userId ?? this.userId,
@@ -37,6 +40,7 @@ class Player {
       score: score ?? this.score,
       isDrawing: isDrawing ?? this.isDrawing,
       numOfGuesses: numOfGuesses ?? this.numOfGuesses,
+      guessedAt: guessedAt ?? this.guessedAt,
     );
   }
 
@@ -49,7 +53,8 @@ class Player {
       'score': score,
       'isDrawing': isDrawing,
       'numOfGuesses': numOfGuesses,
-    };
+      'guessedAt': guessedAt,
+    }..removeWhere((key, value) => value == null);
   }
 
   factory Player.fromMap(Map<String, dynamic> map) {
@@ -61,6 +66,7 @@ class Player {
       score: map['score'] as int,
       isDrawing: map['isDrawing'] as bool,
       numOfGuesses: map['numOfGuesses'] as int,
+      guessedAt: map['guessedAt'] as int,
     );
   }
 

@@ -38,7 +38,7 @@ class LeaderBoard extends StatelessWidget {
                         Expanded(
                           child: FittedBox(
                             child: Text(
-                              '#1 - 2023',
+                              '${players[playerKey]?.score ?? 0}',
                               style: context.textTheme.bodyLarge?.copyWith(
                                 color: AppColors.midnightBlue,
                               ),
@@ -56,7 +56,8 @@ class LeaderBoard extends StatelessWidget {
                             child: Text(
                               players[playerKey]!.name,
                               style: context.textTheme.bodyLarge?.copyWith(
-                                color: AppColors.midnightBlue,),
+                                color: AppColors.midnightBlue,
+                              ),
                             ),
                           ),
                         ),
