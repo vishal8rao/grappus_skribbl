@@ -39,3 +39,26 @@ class OnMessageSent extends SessionEvent {
   @override
   List<Object?> get props => [chat];
 }
+
+class OnRoundStarted extends SessionEvent {
+  const OnRoundStarted();
+
+  @override
+  List<Object?> get props => [];
+}
+
+class OnRoundEnded extends SessionEvent {
+  const OnRoundEnded();
+
+  @override
+  List<Object?> get props => [];
+}
+
+class _TimerTicked extends SessionEvent {
+  const _TimerTicked({required this.duration});
+
+  final int duration;
+
+  @override
+  List<Object?> get props => [duration];
+}

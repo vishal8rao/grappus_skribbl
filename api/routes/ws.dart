@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:api/session/bloc/session_bloc.dart';
-import 'package:api/utils/websocket_event_handler.dart';
+import 'package:api/utils/utils.dart';
 import 'package:dart_frog/dart_frog.dart';
 import 'package:dart_frog_web_socket/dart_frog_web_socket.dart';
 import 'package:models/player.dart';
