@@ -1,9 +1,8 @@
-  import 'dart:async';
+import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
 
-import 'package:api/utils/src/random_words.dart';
-import 'package:api/utils/src/ticker.dart';
+import 'package:api/utils/utils.dart';
 import 'package:broadcast_bloc/broadcast_bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:models/chat_model.dart';
@@ -12,9 +11,7 @@ import 'package:models/player.dart';
 import 'package:models/web_socket_event.dart';
 import 'package:models/web_socket_response.dart';
 
-part 'session_event.dart';
-
-part 'session_state.dart';
+part 'session_event.dart';part 'session_state.dart';
 
 class SessionBloc extends BroadcastBloc<SessionEvent, SessionState> {
   SessionBloc(Ticker ticker)
@@ -40,10 +37,8 @@ class SessionBloc extends BroadcastBloc<SessionEvent, SessionState> {
 
   void _onPlayerAdded(OnPlayerAdded event, Emitter<SessionState> emit) {
     // Round has started when the second player joins the game
-    if (state.players.length == 1 && state.correctAnswer.isEmpty) {
-      emit(state.copyWith(correctAnswer: getRandomWord));
-      print('Correct answer: ${state.correctAnswer}');
-      add(OnRoundStarted());
+    if (state.players.length == 2 && state.correctAnswer.isEmpty) {
+      add(const OnRoundStarted());
     }
     emit(
       state.copyWith(
@@ -59,6 +54,7 @@ class SessionBloc extends BroadcastBloc<SessionEvent, SessionState> {
         players: players,
         eventType: EventType.addPlayer,
         points: state.points,
+
         ///Making [currentPlayerId] null so that it does not override
         currentPlayerId: null,
       ),
@@ -151,6 +147,9 @@ class SessionBloc extends BroadcastBloc<SessionEvent, SessionState> {
 
   void _onRoundStarted(OnRoundStarted event, Emitter<SessionState> emit) {
     _tickerSub?.cancel();
+    //FIXME(*): getRandomWord messes players mapping
+    // final correctAnswer = getRandomWord;
+
     final players = state.players;
 
     var currentRound = state.round;
@@ -163,6 +162,7 @@ class SessionBloc extends BroadcastBloc<SessionEvent, SessionState> {
         round: ++currentRound,
         isDrawing: isDrawing,
         players: players,
+        correctAnswer: 'correctAnswer',
       ),
     );
     _tickerSub = _ticker.tick(ticks: 30).listen(
@@ -171,7 +171,7 @@ class SessionBloc extends BroadcastBloc<SessionEvent, SessionState> {
   }
 
   void _onTicked(_TimerTicked event, Emitter<SessionState> emit) {
-    if (event.duration == 0) {
+    if (event.duration <= 0) {
       add(const OnRoundEnded());
       return;
     }
@@ -182,17 +182,17 @@ class SessionBloc extends BroadcastBloc<SessionEvent, SessionState> {
     OnRoundEnded event,
     Emitter<SessionState> emit,
   ) async {
-    final players = state.players
-      ..forEach((key, value) {
-        value.copyWith(
-          score: _calculateScore(
-            key == state.isDrawing,
-            value.guessedAt,
-            value.numOfGuesses,
-            state.numOfCorrectGuesses,
-          ),
-        );
-      });
+    final players = <String, Player>{}..addAll(state.players);
+    players.forEach((key, value) {
+      players[key] = value.copyWith(
+        score: _calculateScore(
+          key == state.isDrawing,
+          value.guessedAt,
+          value.numOfGuesses,
+          state.numOfCorrectGuesses,
+        ),
+      );
+    });
     emit(state.copyWith(players: players));
     await Future.delayed(
       const Duration(seconds: 5),

@@ -94,7 +94,7 @@ class _ChatComponentState extends State<ChatComponent> {
                                                 .hasAnsweredCorrectly
                                             ? '${messages[newIndex].player.name} has guessed the correct word'
                                             : messages[newIndex].message,
-                                        style: context.textTheme.bodyMedium
+                                        style: context.textTheme.bodySmall
                                             ?.copyWith(
                                           color: AppColors.midnightBlue,
                                         ),
