@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:game_repository/game_repository.dart';
 import 'package:grappus_skribbl/views/game/view/chat_component.dart';
+import 'package:grappus_skribbl/views/game/view/game_word.dart';
 import 'package:grappus_skribbl/views/game/view/leader_board.dart';
 import 'package:grappus_skribbl/views/views.dart';
 import 'package:models/drawing_points.dart';
@@ -62,40 +63,11 @@ class _GamePage extends StatelessWidget {
                   ),
                 ),
                 const Spacer(),
-                SizedBox(
-                  height: 60.toResponsiveHeight(context),
-                  width: 220.toResponsiveWidth(context),
-                  child: Card(
-                    elevation: 10,
-                    color: AppColors.lightPurple,
-                    surfaceTintColor: AppColors.lightPurple,
-                    child: Center(
-                      child: FittedBox(
-                        child: Text(
-                          'The Word',
-                          style: context.textTheme.headlineMedium
-                              ?.copyWith(color: AppColors.indigo),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                // SizedBox(
-                //   width: 12.toResponsiveWidth(context),
-                // ),
-                // Image.asset(
-                //   Assets().getRandomImage(),
-                //   width: 45.toResponsiveWidth(context),
-                //   height: 45.toResponsiveWidth(context),
-                // ),
-                SizedBox(
-                  width: 8.toResponsiveWidth(context),
-                ),
-                FittedBox(
-                  child: Text(
-                    'Random Player guessing the word',
-                    style: context.textTheme.headlineMedium
-                        ?.copyWith(color: AppColors.indigo),
+                Center(
+                  child: GameWord(
+                    isDrawing:
+                        cubit.state.uid == cubit.state.sessionState?.isDrawing,
+                    theWord: cubit.state.sessionState?.correctAnswer ?? '',
                   ),
                 ),
                 const Spacer(),

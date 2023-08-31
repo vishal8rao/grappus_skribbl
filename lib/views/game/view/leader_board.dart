@@ -26,6 +26,7 @@ class LeaderBoard extends StatelessWidget {
             final players = sessionState.players;
             return ListView.builder(
               itemCount: players.length,
+              physics: const BouncingScrollPhysics(),
               itemBuilder: (context, index) {
                 final playerKey = players.keys.toList()[index];
                 return _LeaderboardListItem(
