@@ -38,10 +38,6 @@ class SessionBloc extends BroadcastBloc<SessionEvent, SessionState> {
   }
 
   void _onPlayerAdded(OnPlayerAdded event, Emitter<SessionState> emit) {
-    // Round has started when the second player joins the game
-    if (state.players.length == 1 && state.correctAnswer.isEmpty) {
-      add(const OnRoundStarted());
-    }
     emit(
       state.copyWith(
         currentPlayerId: event.player.userId,
@@ -61,6 +57,9 @@ class SessionBloc extends BroadcastBloc<SessionEvent, SessionState> {
         currentPlayerId: null,
       ),
     );
+    if (state.players.length == 2 && state.correctAnswer.isEmpty) {
+      add(const OnRoundStarted());
+    }
   }
 
   void _onAddPoints(OnPointsAdded event, Emitter<SessionState> emit) {
@@ -121,7 +120,7 @@ class SessionBloc extends BroadcastBloc<SessionEvent, SessionState> {
     const maxPoints = 300;
     const baseDrawingPoints = 100;
     const pointsDeductionPerGuess = 2;
-    const timeInterval = 60; // 60 seconds
+    const timeInterval = 60;
     const pointsDeductionPerInterval = 5;
 
     final deductionIntervals = (guessedAt ~/ pointsDeductionPerInterval)
@@ -168,7 +167,8 @@ class SessionBloc extends BroadcastBloc<SessionEvent, SessionState> {
         correctAnswer: 'correctAnswer',
       ),
     );
-    _tickerSub = _ticker.tick(ticks: 30).listen(
+    const _roundDuration = 60;
+    _tickerSub = _ticker.tick(ticks: _roundDuration).listen(
           (duration) => add(_TimerTicked(duration: duration)),
         );
   }
@@ -187,13 +187,15 @@ class SessionBloc extends BroadcastBloc<SessionEvent, SessionState> {
   ) async {
     final players = <String, Player>{}..addAll(state.players);
     players.forEach((key, value) {
+      final prevScore = value.score;
       players[key] = value.copyWith(
-        score: _calculateScore(
-          key == state.isDrawing,
-          value.guessedAt,
-          value.numOfGuesses,
-          state.numOfCorrectGuesses,
-        ),
+        score: prevScore +
+            _calculateScore(
+              key == state.isDrawing,
+              value.guessedAt,
+              value.numOfGuesses,
+              state.numOfCorrectGuesses,
+            ),
       );
     });
     emit(state.copyWith(players: players));

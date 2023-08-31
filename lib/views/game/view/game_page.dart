@@ -113,35 +113,40 @@ class _GamePage extends StatelessWidget {
                       elevation: 10,
                       color: AppColors.lightPurple,
                       surfaceTintColor: AppColors.lightPurple,
-                      child: GestureDetector(
-                        onPanUpdate: (details) => _handlePanUpdate(
-                          context,
-                          details,
-                          cubit,
-                        ),
-                        onPanStart: (details) => _handlePanStart(
-                          context,
-                          details,
-                          cubit,
-                        ),
-                        onPanEnd: (_) => _handlePanEnd(
-                          cubit,
-                        ),
-                        child: BlocBuilder<GameCubit, GameState>(
-                          builder: (context, state) {
-                            final sessionState = state.sessionState;
-                            if (sessionState != null) {
-                              final newDrawingPoint =
-                                  sessionState.points.toDrawingPoints();
-                              pointsList.add(newDrawingPoint);
-                            }
-                            return RepaintBoundary(
-                              child: CustomPaint(
-                                size: Size.infinite,
-                                painter: DrawingPainter(pointsList: pointsList),
-                              ),
-                            );
-                          },
+                      child: IgnorePointer(
+                        ignoring: cubit.state.uid !=
+                            cubit.state.sessionState?.isDrawing,
+                        child: GestureDetector(
+                          onPanUpdate: (details) => _handlePanUpdate(
+                            context,
+                            details,
+                            cubit,
+                          ),
+                          onPanStart: (details) => _handlePanStart(
+                            context,
+                            details,
+                            cubit,
+                          ),
+                          onPanEnd: (_) => _handlePanEnd(
+                            cubit,
+                          ),
+                          child: BlocBuilder<GameCubit, GameState>(
+                            builder: (context, state) {
+                              final sessionState = state.sessionState;
+                              if (sessionState != null) {
+                                final newDrawingPoint =
+                                    sessionState.points.toDrawingPoints();
+                                pointsList.add(newDrawingPoint);
+                              }
+                              return RepaintBoundary(
+                                child: CustomPaint(
+                                  size: Size.infinite,
+                                  painter:
+                                      DrawingPainter(pointsList: pointsList),
+                                ),
+                              );
+                            },
+                          ),
                         ),
                       ),
                     ),
