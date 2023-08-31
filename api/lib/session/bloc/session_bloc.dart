@@ -11,7 +11,8 @@ import 'package:models/player.dart';
 import 'package:models/web_socket_event.dart';
 import 'package:models/web_socket_response.dart';
 
-part 'session_event.dart';part 'session_state.dart';
+part 'session_event.dart';
+part 'session_state.dart';
 
 class SessionBloc extends BroadcastBloc<SessionEvent, SessionState> {
   SessionBloc(Ticker ticker)
@@ -37,7 +38,7 @@ class SessionBloc extends BroadcastBloc<SessionEvent, SessionState> {
 
   void _onPlayerAdded(OnPlayerAdded event, Emitter<SessionState> emit) {
     // Round has started when the second player joins the game
-    if (state.players.length == 2 && state.correctAnswer.isEmpty) {
+    if (state.players.length == 1 && state.correctAnswer.isEmpty) {
       add(const OnRoundStarted());
     }
     emit(
@@ -171,11 +172,11 @@ class SessionBloc extends BroadcastBloc<SessionEvent, SessionState> {
   }
 
   void _onTicked(_TimerTicked event, Emitter<SessionState> emit) {
-    if (event.duration <= 0) {
+    emit(state.copyWith(remainingTime: event.duration));
+    if (event.duration == 0) {
       add(const OnRoundEnded());
       return;
     }
-    emit(state.copyWith(remainingTime: event.duration));
   }
 
   Future<void> _onRoundEnded(
