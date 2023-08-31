@@ -74,6 +74,9 @@ class SessionBloc extends BroadcastBloc<SessionEvent, SessionState> {
 
     final isCorrectAnswer = _checkIfMessageIsCorrectAnswer(event);
     if (isCorrectAnswer) {
+      if (event.chat.player.userId == state.isDrawing) {
+        return;
+      }
       players[event.chat.player.userId] =
           players[event.chat.player.userId]!.copyWith(
         hasAnsweredCorrectly: true,
@@ -167,8 +170,8 @@ class SessionBloc extends BroadcastBloc<SessionEvent, SessionState> {
         correctAnswer: 'correctAnswer',
       ),
     );
-    const _roundDuration = 60;
-    _tickerSub = _ticker.tick(ticks: _roundDuration).listen(
+    const roundDuration = 60;
+    _tickerSub = _ticker.tick(ticks: roundDuration).listen(
           (duration) => add(_TimerTicked(duration: duration)),
         );
   }

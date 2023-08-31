@@ -108,7 +108,9 @@ class _GamePage extends StatelessWidget {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  const Expanded(child: LeaderBoard()),
                   Expanded(
+                    flex: 3,
                     child: Card(
                       elevation: 10,
                       color: AppColors.lightPurple,
@@ -161,7 +163,6 @@ class _GamePage extends StatelessWidget {
             SizedBox(
               height: 22.toResponsiveHeight(context),
             ),
-            const LeaderBoard(),
           ],
         ),
       ),
