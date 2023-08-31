@@ -1,7 +1,6 @@
-import 'package:models/chat_model.dart';
-import 'package:models/drawing_points.dart';
-import 'package:models/player.dart';
-import 'package:models/web_socket_event.dart';
+
+
+import 'package:models/models.dart';
 
 class WebSocketEventHandler {
   // ignore: strict_raw_type

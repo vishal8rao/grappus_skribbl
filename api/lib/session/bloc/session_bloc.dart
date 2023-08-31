@@ -5,11 +5,8 @@ import 'dart:math';
 import 'package:api/utils/utils.dart';
 import 'package:broadcast_bloc/broadcast_bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:models/chat_model.dart';
-import 'package:models/drawing_points.dart';
-import 'package:models/player.dart';
-import 'package:models/web_socket_event.dart';
-import 'package:models/web_socket_response.dart';
+import 'package:models/models.dart';
+
 
 part 'session_event.dart';
 
@@ -123,11 +120,10 @@ class SessionBloc extends BroadcastBloc<SessionEvent, SessionState> {
     const maxPoints = 300;
     const baseDrawingPoints = 100;
     const pointsDeductionPerGuess = 2;
-    const timeInterval = 60;
     const pointsDeductionPerInterval = 5;
 
     final deductionIntervals = (guessedAt ~/ pointsDeductionPerInterval)
-        .clamp(0, timeInterval ~/ pointsDeductionPerInterval);
+        .clamp(0, SessionState.roundDuration ~/ pointsDeductionPerInterval);
 
     if (!isDrawing) {
       final points = maxPoints - (numOfGuesses * pointsDeductionPerGuess);
@@ -170,8 +166,7 @@ class SessionBloc extends BroadcastBloc<SessionEvent, SessionState> {
         correctAnswer: 'correctAnswer',
       ),
     );
-    const roundDuration = 60;
-    _tickerSub = _ticker.tick(ticks: roundDuration).listen(
+    _tickerSub = _ticker.tick(ticks: SessionState.roundDuration).listen(
           (duration) => add(_TimerTicked(duration: duration)),
         );
   }

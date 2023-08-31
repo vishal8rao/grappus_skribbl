@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:grappus_skribbl/views/views.dart';
-import 'package:models/player.dart';
+import 'package:models/models.dart';
 
 class LeaderBoard extends StatelessWidget {
   const LeaderBoard({super.key});
@@ -51,7 +51,7 @@ class _LeaderboardListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(right: 8,bottom: 8).responsive(context),
+      padding: const EdgeInsets.only(right: 8, bottom: 8).responsive(context),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -83,7 +83,6 @@ class _LeaderboardListItem extends StatelessWidget {
             width: 70.toResponsiveHeight(context),
             height: 70.toResponsiveHeight(context),
           ),
-
         ],
       ),
     );

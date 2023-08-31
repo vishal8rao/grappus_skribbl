@@ -8,7 +8,7 @@ import 'package:grappus_skribbl/views/game/view/chat_component.dart';
 import 'package:grappus_skribbl/views/game/view/game_word.dart';
 import 'package:grappus_skribbl/views/game/view/leader_board.dart';
 import 'package:grappus_skribbl/views/views.dart';
-import 'package:models/drawing_points.dart';
+import 'package:models/models.dart';
 
 class GamePage extends StatelessWidget {
   const GamePage({required this.url, required this.name, super.key});

@@ -4,14 +4,13 @@ import 'package:api/session/bloc/session_bloc.dart';
 import 'package:api/utils/utils.dart';
 import 'package:dart_frog/dart_frog.dart';
 import 'package:dart_frog_web_socket/dart_frog_web_socket.dart';
-import 'package:models/player.dart';
-import 'package:models/web_socket_event.dart';
+import 'package:models/models.dart';
 
 /// Websocket Handler
 Future<Response> onRequest(RequestContext context) async {
   final handler = webSocketHandler((channel, protocol) {
     final sessionBloc = context.read<SessionBloc>()..subscribe(channel);
-    var player = Player(userId: '', name: '',imagePath: '');
+    var player = Player(userId: '', name: '', imagePath: '');
     channel.stream.listen(
       (data) {
         try {

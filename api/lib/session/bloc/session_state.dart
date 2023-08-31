@@ -8,7 +8,7 @@ class SessionState extends Equatable {
     this.eventType = EventType.invalid,
     this.messages = const [],
     this.correctAnswer = '',
-    this.remainingTime = 30,
+    this.remainingTime = roundDuration,
     this.numOfCorrectGuesses = 0,
     this.round = 1,
     this.isDrawing = '',
@@ -36,6 +36,7 @@ class SessionState extends Equatable {
           ),
         ),
       );
+  static const roundDuration = 60;
 
   final String? currentPlayerId;
   final Map<String, Player> players;
