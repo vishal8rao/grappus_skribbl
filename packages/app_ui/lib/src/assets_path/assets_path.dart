@@ -43,6 +43,7 @@ class Assets {
   late String avatar28 = '$imagesBasePath/28avatar.png';
   late String avatar29 = '$imagesBasePath/29avatar.png';
   late String avatar30 = '$imagesBasePath/30avatar.png';
+  static const String icPencil = 'packages/app_ui/assets/images/ic_pencil.svg';
 
   String getRandomImage() {
     final random = Random();

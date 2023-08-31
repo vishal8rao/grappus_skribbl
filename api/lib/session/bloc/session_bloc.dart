@@ -12,6 +12,7 @@ import 'package:models/web_socket_event.dart';
 import 'package:models/web_socket_response.dart';
 
 part 'session_event.dart';
+
 part 'session_state.dart';
 
 class SessionBloc extends BroadcastBloc<SessionEvent, SessionState> {
@@ -120,16 +121,17 @@ class SessionBloc extends BroadcastBloc<SessionEvent, SessionState> {
     const maxPoints = 300;
     const baseDrawingPoints = 100;
     const pointsDeductionPerGuess = 2;
+    const timeInterval = 60; // 60 seconds
+    const pointsDeductionPerInterval = 5;
+
+    final deductionIntervals = (guessedAt ~/ pointsDeductionPerInterval)
+        .clamp(0, timeInterval ~/ pointsDeductionPerInterval);
+
     if (!isDrawing) {
-      return switch (guessedAt) {
-        >= 25 => maxPoints - (numOfGuesses * pointsDeductionPerGuess),
-        >= 20 => maxPoints - (numOfGuesses * pointsDeductionPerGuess) - 50,
-        >= 15 => maxPoints - (numOfGuesses * pointsDeductionPerGuess) - 100,
-        >= 10 => maxPoints - (numOfGuesses * pointsDeductionPerGuess) - 150,
-        >= 5 => maxPoints - (numOfGuesses * pointsDeductionPerGuess) - 200,
-        >= 0 => maxPoints - (numOfGuesses * pointsDeductionPerGuess) - 250,
-        _ => 0,
-      };
+      final points = maxPoints - (numOfGuesses * pointsDeductionPerGuess);
+      final totalDeduction = deductionIntervals * pointsDeductionPerGuess;
+
+      return points >= totalDeduction ? points - totalDeduction : 0;
     }
     final bonusPointsPerGuess =
         numOfCorrectGuesses == 0 ? 0 : maxPoints ~/ numOfCorrectGuesses;

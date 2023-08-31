@@ -1,6 +1,7 @@
 import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:grappus_skribbl/views/views.dart';
 
 class LeaderBoard extends StatelessWidget {
@@ -51,6 +52,10 @@ class LeaderBoard extends StatelessWidget {
                           height: 70.toResponsiveHeight(context),
                         ),
                         SizedBox(height: 5.toResponsiveHeight(context)),
+                        if (playerKey == state.sessionState?.isDrawing) ...[
+                          SvgPicture.asset(Assets.icPencil, width: 30),
+                          SizedBox(height: 5.toResponsiveHeight(context)),
+                        ],
                         Expanded(
                           child: FittedBox(
                             child: Text(
