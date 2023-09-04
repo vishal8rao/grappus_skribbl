@@ -2,16 +2,24 @@
 import 'dart:convert';
 
 class Player {
-   String userId;
-   String name;
-   String imagePath;
+  String userId;
+  String name;
+  String imagePath;
   final bool hasAnsweredCorrectly;
+  final int score;
+  final bool isDrawing;
+  final int numOfGuesses;
+  final int guessedAt;
 
   Player({
     required this.userId,
     required this.name,
     required this.imagePath,
     this.hasAnsweredCorrectly = false,
+    this.score = 0,
+    this.isDrawing = false,
+    this.numOfGuesses = 0,
+    this.guessedAt = -1,
   });
 
   Player copyWith({
@@ -19,12 +27,20 @@ class Player {
     String? name,
     String? imagePath,
     bool? hasAnsweredCorrectly,
+    int? score,
+    bool? isDrawing,
+    int? numOfGuesses,
+    int? guessedAt,
   }) {
     return Player(
       userId: userId ?? this.userId,
       name: name ?? this.name,
       imagePath: imagePath ?? this.imagePath,
       hasAnsweredCorrectly: hasAnsweredCorrectly ?? this.hasAnsweredCorrectly,
+      score: score ?? this.score,
+      isDrawing: isDrawing ?? this.isDrawing,
+      numOfGuesses: numOfGuesses ?? this.numOfGuesses,
+      guessedAt: guessedAt ?? this.guessedAt,
     );
   }
 
@@ -34,7 +50,11 @@ class Player {
       'name': name,
       'imagePath': imagePath,
       'hasAnsweredCorrectly': hasAnsweredCorrectly,
-    };
+      'score': score,
+      'isDrawing': isDrawing,
+      'numOfGuesses': numOfGuesses,
+      'guessedAt': guessedAt,
+    }..removeWhere((key, value) => value == null);
   }
 
   factory Player.fromMap(Map<String, dynamic> map) {
@@ -43,6 +63,10 @@ class Player {
       name: map['name'] as String,
       imagePath: map['imagePath'] as String,
       hasAnsweredCorrectly: (map['hasAnsweredCorrectly'] ?? false) as bool,
+      score: map['score'] as int,
+      isDrawing: map['isDrawing'] as bool,
+      numOfGuesses: map['numOfGuesses'] as int,
+      guessedAt: map['guessedAt'] as int,
     );
   }
 

@@ -5,9 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:game_repository/game_repository.dart';
 import 'package:grappus_skribbl/views/game/view/chat_component.dart';
+import 'package:grappus_skribbl/views/game/view/game_word.dart';
 import 'package:grappus_skribbl/views/game/view/leader_board.dart';
 import 'package:grappus_skribbl/views/views.dart';
-import 'package:models/drawing_points.dart';
+import 'package:models/models.dart';
 
 class GamePage extends StatelessWidget {
   const GamePage({required this.url, required this.name, super.key});
@@ -36,7 +37,8 @@ class _GamePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<GameCubit>();
-
+    final remainingTime =
+        context.watch<GameCubit>().state.sessionState?.remainingTime;
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(25).responsive(context),
@@ -55,46 +57,17 @@ class _GamePage extends StatelessWidget {
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
-                    '00',
+                    '${remainingTime ?? 0}',
                     style: context.textTheme.headlineLarge
                         ?.copyWith(color: AppColors.indigo),
                   ),
                 ),
                 const Spacer(),
-                SizedBox(
-                  height: 60.toResponsiveHeight(context),
-                  width: 220.toResponsiveWidth(context),
-                  child: Card(
-                    elevation: 10,
-                    color: AppColors.lightPurple,
-                    surfaceTintColor: AppColors.lightPurple,
-                    child: Center(
-                      child: FittedBox(
-                        child: Text(
-                          'The Word',
-                          style: context.textTheme.headlineMedium
-                              ?.copyWith(color: AppColors.indigo),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  width: 12.toResponsiveWidth(context),
-                ),
-                Image.asset(
-                  Assets().getRandomImage(),
-                  width: 45.toResponsiveWidth(context),
-                  height: 45.toResponsiveWidth(context),
-                ),
-                SizedBox(
-                  width: 8.toResponsiveWidth(context),
-                ),
-                FittedBox(
-                  child: Text(
-                    'Random Player guessing the word',
-                    style: context.textTheme.headlineMedium
-                        ?.copyWith(color: AppColors.indigo),
+                Center(
+                  child: GameWord(
+                    isDrawing:
+                        cubit.state.uid == cubit.state.sessionState?.isDrawing,
+                    theWord: cubit.state.sessionState?.correctAnswer ?? '',
                   ),
                 ),
                 const Spacer(),
@@ -107,40 +80,47 @@ class _GamePage extends StatelessWidget {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  const Expanded(child: LeaderBoard()),
                   Expanded(
+                    flex: 3,
                     child: Card(
                       elevation: 10,
                       color: AppColors.lightPurple,
                       surfaceTintColor: AppColors.lightPurple,
-                      child: GestureDetector(
-                        onPanUpdate: (details) => _handlePanUpdate(
-                          context,
-                          details,
-                          cubit,
-                        ),
-                        onPanStart: (details) => _handlePanStart(
-                          context,
-                          details,
-                          cubit,
-                        ),
-                        onPanEnd: (_) => _handlePanEnd(
-                          cubit,
-                        ),
-                        child: BlocBuilder<GameCubit, GameState>(
-                          builder: (context, state) {
-                            final sessionState = state.sessionState;
-                            if (sessionState != null) {
-                              final newDrawingPoint =
-                                  sessionState.points.toDrawingPoints();
-                              pointsList.add(newDrawingPoint);
-                            }
-                            return RepaintBoundary(
-                              child: CustomPaint(
-                                size: Size.infinite,
-                                painter: DrawingPainter(pointsList: pointsList),
-                              ),
-                            );
-                          },
+                      child: IgnorePointer(
+                        ignoring: cubit.state.uid !=
+                            cubit.state.sessionState?.isDrawing,
+                        child: GestureDetector(
+                          onPanUpdate: (details) => _handlePanUpdate(
+                            context,
+                            details,
+                            cubit,
+                          ),
+                          onPanStart: (details) => _handlePanStart(
+                            context,
+                            details,
+                            cubit,
+                          ),
+                          onPanEnd: (_) => _handlePanEnd(
+                            cubit,
+                          ),
+                          child: BlocBuilder<GameCubit, GameState>(
+                            builder: (context, state) {
+                              final sessionState = state.sessionState;
+                              if (sessionState != null) {
+                                final newDrawingPoint =
+                                    sessionState.points.toDrawingPoints();
+                                pointsList.add(newDrawingPoint);
+                              }
+                              return RepaintBoundary(
+                                child: CustomPaint(
+                                  size: Size.infinite,
+                                  painter:
+                                      DrawingPainter(pointsList: pointsList),
+                                ),
+                              );
+                            },
+                          ),
                         ),
                       ),
                     ),
@@ -155,7 +135,6 @@ class _GamePage extends StatelessWidget {
             SizedBox(
               height: 22.toResponsiveHeight(context),
             ),
-            const LeaderBoard(),
           ],
         ),
       ),

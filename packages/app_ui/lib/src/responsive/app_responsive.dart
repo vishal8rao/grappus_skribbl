@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 
 class ScreenUtils {
@@ -19,15 +18,15 @@ extension ResponsiveIntegerConstraints on num {
 
 extension ScreenDimensions on BuildContext {
   double get screenHeight => MediaQuery.sizeOf(this).height;
+
   double get screenWidth => MediaQuery.sizeOf(this).width;
 }
 
 extension ResponsiveEdgeInsets on EdgeInsets {
   EdgeInsets responsive(BuildContext context) => copyWith(
-    left: left.toResponsiveWidth(context),
-    right: right.toResponsiveWidth(context),
-    top: top.toResponsiveHeight(context),
-    bottom: bottom.toResponsiveHeight(context),
-  );
+        left: left.toResponsiveWidth(context),
+        right: right.toResponsiveWidth(context),
+        top: top.toResponsiveHeight(context),
+        bottom: bottom.toResponsiveHeight(context),
+      );
 }
-

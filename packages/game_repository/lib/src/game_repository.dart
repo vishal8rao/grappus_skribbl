@@ -1,11 +1,7 @@
 import 'dart:convert';
 
 import 'package:api/session/bloc/session_bloc.dart';
-import 'package:models/chat_model.dart';
-import 'package:models/drawing_points.dart';
-import 'package:models/player.dart';
-import 'package:models/web_socket_event.dart';
-import 'package:models/web_socket_response.dart';
+import 'package:models/models.dart';
 import 'package:web_socket_client/web_socket_client.dart';
 
 /// {@template game_repository}

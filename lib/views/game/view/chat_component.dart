@@ -2,8 +2,7 @@ import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:grappus_skribbl/views/game/cubit/game_cubit.dart';
-import 'package:models/chat_model.dart';
-import 'package:models/player.dart';
+import 'package:models/models.dart';
 
 class ChatComponent extends StatefulWidget {
   const ChatComponent({super.key});
@@ -94,7 +93,7 @@ class _ChatComponentState extends State<ChatComponent> {
                                                 .hasAnsweredCorrectly
                                             ? '${messages[newIndex].player.name} has guessed the correct word'
                                             : messages[newIndex].message,
-                                        style: context.textTheme.bodyMedium
+                                        style: context.textTheme.bodySmall
                                             ?.copyWith(
                                           color: AppColors.midnightBlue,
                                         ),

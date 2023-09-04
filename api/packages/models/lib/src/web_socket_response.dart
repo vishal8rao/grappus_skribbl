@@ -1,7 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
-import 'package:models/web_socket_event.dart';
+import 'package:models/src/web_socket_event.dart';
 
 class WebSocketResponse {
   final String status;

@@ -5,9 +5,7 @@ import 'package:app_ui/app_ui.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:game_repository/game_repository.dart';
-import 'package:models/chat_model.dart';
-import 'package:models/drawing_points.dart';
-import 'package:models/player.dart';
+import 'package:models/models.dart';
 import 'package:uuid/uuid.dart';
 
 part 'game_state.dart';
