@@ -1,6 +1,6 @@
 import 'dart:math';
 
-String get getRandomWord =>
+Future<String> get getRandomWord async =>
     _randomWords[Random().nextInt(_randomWords.length - 1)];
 
 final _randomWords = [

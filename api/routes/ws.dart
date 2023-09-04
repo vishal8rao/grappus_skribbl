@@ -34,7 +34,9 @@ Future<Response> onRequest(RequestContext context) async {
           }
           final websocketEvent =
               WebSocketEventHandler.handleWebSocketEvent(jsonData);
-
+          if (websocketEvent == null) {
+            return;
+          }
           switch (websocketEvent.runtimeType) {
             case AddDrawingPointsEvent:
               final receivedPoints =
@@ -51,7 +53,12 @@ Future<Response> onRequest(RequestContext context) async {
           }
         } catch (e) {
           channel.sink.add(
-            jsonEncode({'status': 'error', 'message': e.toString()}),
+            WebSocketResponse(
+              data: {},
+              status: 'error',
+              eventType: EventType.invalid,
+              message: e.toString(),
+            ).encodedJson(),
           );
           rethrow;
         }

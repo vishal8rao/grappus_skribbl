@@ -7,6 +7,7 @@ import 'package:game_repository/game_repository.dart';
 import 'package:grappus_skribbl/views/game/view/chat_component.dart';
 import 'package:grappus_skribbl/views/game/view/game_word.dart';
 import 'package:grappus_skribbl/views/game/view/leader_board.dart';
+import 'package:grappus_skribbl/views/game/view/round_end_dialog.dart';
 import 'package:grappus_skribbl/views/views.dart';
 import 'package:models/models.dart';
 
@@ -33,10 +34,12 @@ class _GamePage extends StatelessWidget {
   _GamePage();
 
   late List<DrawingPoints> pointsList = <DrawingPoints>[];
-
+  bool isDialogOpened(BuildContext context) =>
+      ModalRoute.of(context)?.isCurrent != true;
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<GameCubit>();
+
     final remainingTime =
         context.watch<GameCubit>().state.sessionState?.remainingTime;
     return Scaffold(
@@ -64,10 +67,31 @@ class _GamePage extends StatelessWidget {
                 ),
                 const Spacer(),
                 Center(
-                  child: GameWord(
-                    isDrawing:
-                        cubit.state.uid == cubit.state.sessionState?.isDrawing,
-                    theWord: cubit.state.sessionState?.correctAnswer ?? '',
+                  child: BlocConsumer<GameCubit, GameState>(
+                    listener: (context, state) {
+                      if (state.sessionState == null) {
+                        return;
+                      }
+                      if (state.sessionState!.eventType == EventType.roundEnd) {
+                        if (isDialogOpened(context)) {
+                          return;
+                        }
+                        showDialog<void>(
+                          context: context,
+                          builder: (context) => BlocProvider.value(
+                            value: cubit,
+                            child: const RoundEndDialog(),
+                          ),
+                        ).then((value) => pointsList.clear());
+                      }
+                    },
+                    builder: (context, state) {
+                      return GameWord(
+                        isDrawing:
+                            state.uid == cubit.state.sessionState?.isDrawing,
+                        theWord: state.sessionState?.correctAnswer ?? '',
+                      );
+                    },
                   ),
                 ),
                 const Spacer(),

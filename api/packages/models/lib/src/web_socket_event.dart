@@ -9,7 +9,9 @@ enum EventType {
   drawing('__drawing__'),
   chat('__chat__'),
   addPlayer('__add_player__'),
-  invalid('__invalid__');
+  invalid('__invalid__'),
+  roundStart('__round_start__'),
+  roundEnd('__round_end__');
 
   const EventType(this.name);
 

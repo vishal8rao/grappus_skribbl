@@ -1,10 +1,8 @@
-
-
 import 'package:models/models.dart';
 
 class WebSocketEventHandler {
   // ignore: strict_raw_type
-  static WebSocketEvent handleWebSocketEvent(
+  static WebSocketEvent? handleWebSocketEvent(
     Map<String, dynamic> jsonData,
   ) {
     final eventTypeName = jsonData['eventType'];
@@ -13,6 +11,9 @@ class WebSocketEventHandler {
       (element) => element.name == eventTypeName,
       orElse: () => EventType.invalid,
     );
+    if (eventType == EventType.invalid) {
+      throw Exception('Invalid Event : $jsonData');
+    }
     switch (eventType) {
       case EventType.drawing:
         return AddDrawingPointsEvent(data: DrawingPointsWrapper.fromJson(data));
@@ -26,8 +27,9 @@ class WebSocketEventHandler {
 
       case EventType.invalid:
       case EventType.connect:
+      case EventType.roundStart:
+      case EventType.roundEnd:
     }
-
-    throw Exception('Invalid Event : $jsonData');
+    return null;
   }
 }
