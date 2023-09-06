@@ -48,6 +48,8 @@ class SessionBloc extends BroadcastBloc<SessionEvent, SessionState> {
         players: players,
         eventType: EventType.addPlayer,
         points: state.points,
+        // ignore: avoid_redundant_argument_values
+        currentPlayerId: null,
       ),
     );
     if (state.players.length == 2 && state.correctAnswer.isEmpty) {

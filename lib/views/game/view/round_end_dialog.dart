@@ -5,6 +5,7 @@ import 'package:app_ui/app_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:grappus_skribbl/views/game/cubit/game_cubit.dart';
+import 'package:models/models.dart';
 
 class RoundEndDialog extends StatefulWidget {
   const RoundEndDialog({super.key});
@@ -55,7 +56,11 @@ class _RoundEndDialogState extends State<RoundEndDialog> {
         ),
       ),
       listener: (context, state) {
-        if (remainingSeconds == 0) {
+        if (state.sessionState == null) {
+          return;
+        }
+        if (remainingSeconds == 0 &&
+            state.sessionState!.eventType == EventType.roundStart) {
           _tickerSub.cancel();
           Navigator.of(context).pop();
         }
