@@ -7,7 +7,6 @@ import 'package:broadcast_bloc/broadcast_bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:models/models.dart';
 
-
 part 'session_event.dart';
 
 part 'session_state.dart';
@@ -49,8 +48,7 @@ class SessionBloc extends BroadcastBloc<SessionEvent, SessionState> {
         players: players,
         eventType: EventType.addPlayer,
         points: state.points,
-
-        ///Making [currentPlayerId] null so that it does not override
+        // ignore: avoid_redundant_argument_values
         currentPlayerId: null,
       ),
     );
@@ -94,6 +92,15 @@ class SessionBloc extends BroadcastBloc<SessionEvent, SessionState> {
           numOfCorrectGuesses: ++correctGuesses,
         ),
       );
+
+      final allPlayersAnsweredCorrectly = state.players.keys
+          .where((element) => element != state.isDrawing)
+          .any((playerID) => state.players[playerID]!.hasAnsweredCorrectly);
+
+      if (allPlayersAnsweredCorrectly) {
+        add(const OnRoundEnded());
+      }
+
       return;
     }
     players[event.chat.player.userId]?.copyWith(numOfGuesses: ++guesses);
@@ -146,24 +153,51 @@ class SessionBloc extends BroadcastBloc<SessionEvent, SessionState> {
     emit(state.copyWith(players: players));
   }
 
-  void _onRoundStarted(OnRoundStarted event, Emitter<SessionState> emit) {
-    _tickerSub?.cancel();
-    //FIXME(*): getRandomWord messes players mapping
-    // final correctAnswer = getRandomWord;
+  Future<void> _onRoundStarted(
+    OnRoundStarted event,
+    Emitter<SessionState> emit,
+  ) async {
+    await _tickerSub?.cancel();
 
     final players = state.players;
 
     var currentRound = state.round;
-    final isDrawing = state.players.keys.toList()[Random().nextInt(
-      state.players.keys.length - 1,
-    )];
-    players[isDrawing]?.copyWith(isDrawing: true);
+
+    final remainingPlayers = state.players.keys
+        .where((id) => !state.players[id]!.hasCompletedDrawingRound)
+        .toList();
+
+    if (remainingPlayers.isEmpty) {
+      // TODO: End game here then start a new match with everything reset
+      // At this point all players have drawn, we can show leaderboard.
+      return;
+    }
+
+    // Select a random player from the players who havent drawn yet
+    final randomIndex = Random().nextInt(
+      max(1, remainingPlayers.length - 1),
+    );
+
+    final currentDrawingPlayerID =
+        remainingPlayers[max(randomIndex, remainingPlayers.length - 1)];
+    players[currentDrawingPlayerID]?.copyWith(isDrawing: true);
+
+    final randomWord = await getRandomWord;
     emit(
       state.copyWith(
         round: ++currentRound,
-        isDrawing: isDrawing,
-        players: players,
-        correctAnswer: 'correctAnswer',
+        isDrawing: currentDrawingPlayerID,
+        points: const DrawingPointsWrapper(points: null, paint: null),
+        players: players.map(
+          (key, value) => MapEntry(
+            key,
+            value.copyWith(
+              hasAnsweredCorrectly: false,
+            ),
+          ),
+        ),
+        correctAnswer: randomWord,
+        eventType: EventType.roundStart,
       ),
     );
     _tickerSub = _ticker.tick(ticks: SessionState.roundDuration).listen(
@@ -196,7 +230,19 @@ class SessionBloc extends BroadcastBloc<SessionEvent, SessionState> {
             ),
       );
     });
-    emit(state.copyWith(players: players));
+    if (players.keys.contains(state.isDrawing)) {
+      players[state.isDrawing] =
+          players[state.isDrawing]!.copyWith(hasCompletedDrawingRound: true);
+    }
+
+    emit(
+      state.copyWith(
+        players: players,
+        eventType: EventType.roundEnd,
+        isDrawing: '',
+      ),
+    );
+
     await Future.delayed(
       const Duration(seconds: 5),
       () => add(const OnRoundStarted()),

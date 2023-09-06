@@ -10,11 +10,13 @@ class Player {
   final bool isDrawing;
   final int numOfGuesses;
   final int guessedAt;
+  final bool hasCompletedDrawingRound;
 
   Player({
     required this.userId,
     required this.name,
     required this.imagePath,
+    this.hasCompletedDrawingRound = false,
     this.hasAnsweredCorrectly = false,
     this.score = 0,
     this.isDrawing = false,
@@ -31,6 +33,7 @@ class Player {
     bool? isDrawing,
     int? numOfGuesses,
     int? guessedAt,
+    bool? hasCompletedDrawingRound,
   }) {
     return Player(
       userId: userId ?? this.userId,
@@ -41,6 +44,8 @@ class Player {
       isDrawing: isDrawing ?? this.isDrawing,
       numOfGuesses: numOfGuesses ?? this.numOfGuesses,
       guessedAt: guessedAt ?? this.guessedAt,
+      hasCompletedDrawingRound:
+          hasCompletedDrawingRound ?? this.hasCompletedDrawingRound,
     );
   }
 
@@ -54,7 +59,8 @@ class Player {
       'isDrawing': isDrawing,
       'numOfGuesses': numOfGuesses,
       'guessedAt': guessedAt,
-    }..removeWhere((key, value) => value == null);
+      'hasCompletedDrawingRound': hasCompletedDrawingRound,
+    };
   }
 
   factory Player.fromMap(Map<String, dynamic> map) {
@@ -62,11 +68,12 @@ class Player {
       userId: map['userId'] as String,
       name: map['name'] as String,
       imagePath: map['imagePath'] as String,
-      hasAnsweredCorrectly: (map['hasAnsweredCorrectly'] ?? false) as bool,
+      hasAnsweredCorrectly: map['hasAnsweredCorrectly'] as bool,
       score: map['score'] as int,
       isDrawing: map['isDrawing'] as bool,
       numOfGuesses: map['numOfGuesses'] as int,
       guessedAt: map['guessedAt'] as int,
+      hasCompletedDrawingRound: map['hasCompletedDrawingRound'] as bool,
     );
   }
 
