@@ -13,7 +13,7 @@ class GameRepository {
   GameRepository({required Uri uri}) : _ws = WebSocket(uri);
 
   final WebSocket _ws;
-  final GameService gameService = GameService();
+  final GameService _gameService = GameService();
 
   /// function to get the current session data stream
   Stream<SessionState?> get session {
@@ -39,7 +39,7 @@ class GameRepository {
   /// Returns a uid
   Future<String?> getUID() async {
     try {
-      final data = (await gameService.connect()).data;
+      final data = (await _gameService.connect()).data;
       return (jsonDecode(data.toString()) as Map<String, dynamic>)['data']
           .toString();
     } catch (e) {
