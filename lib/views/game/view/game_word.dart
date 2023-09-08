@@ -10,11 +10,24 @@ class GameWord extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (isDrawing) {
-      return Text(
-        theWord,
-        style: context.textTheme.headlineMedium?.copyWith(
-          color: AppColors.indigo,
-        ),
+      return Row(
+        children: [
+          Text(
+            'Word: ',
+            style: context.textTheme.bodyLarge?.copyWith(
+              fontSize: 32,
+              color: AppColors.pastelPink,
+              fontFamily: 'PaytoneOne',
+            ),
+          ),
+          Text(
+            theWord,
+            style: context.textTheme.bodyLarge?.copyWith(
+              fontSize: 32,
+              color: AppColors.butterCreamYellow,
+            ),
+          ),
+        ],
       );
     }
     return Row(
@@ -30,20 +43,29 @@ class GameWord extends StatelessWidget {
               decoration: const BoxDecoration(
                 border: Border(
                   bottom: BorderSide(
-                    color: AppColors.highEmphasisSurface,
+                    color: AppColors.butterCreamYellow,
                   ),
                 ),
               ),
               //TODO(*): Add logic to hide words
               child: Text(
                 theWord.split('').toList()[index],
-                style: context.textTheme.titleLarge,
+                style: context.textTheme.bodyLarge?.copyWith(
+                  fontSize: 32,
+                  color: AppColors.butterCreamYellow,
+                ),
               ),
             ),
           ),
         ),
         SizedBox(width: 10.toResponsiveWidth(context)),
-        Text('${theWord.length}'),
+        Text(
+          theWord.isEmpty ? '' : '${theWord.length}',
+          style: context.textTheme.bodyLarge?.copyWith(
+            fontSize: 32,
+            color: AppColors.butterCreamYellow,
+          ),
+        ),
       ],
     );
   }

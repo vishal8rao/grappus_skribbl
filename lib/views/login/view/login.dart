@@ -46,7 +46,7 @@ class LoginPage extends StatelessWidget {
                   ),
                   onPressed: () => Navigator.of(context).push<Widget>(
                     MaterialPageRoute(
-                      builder: (context) => GamePage(
+                      builder: (context) => GameMainPage(
                         url: _gameUrlController.text,
                         name: _nameController.text,
                       ),
